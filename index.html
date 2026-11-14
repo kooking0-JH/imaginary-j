@@ -634,7 +634,7 @@ function cstr(re,im,u){
 /* ---------- 실험 ① 회전 ---------- */
 (function(){
   const P=prep("cvRot"), x=P.x, w=P.w, h=P.h, cx=185, cy=h/2, s=30, RN=stackable(P,370);
-  let start=[3,4], z=[3,4], nI=0, anim=null, trail=[], cur=[3,4];
+  let start=[3,4], z=[3,4], nI=0, anim=null, raf=null, trail=[], cur=[3,4];
   const pw=["1","i","−1","−i"], deg=["0°","90°","180°","270°"];
   function paint(){
     const zz=cur;
@@ -687,12 +687,12 @@ function cstr(re,im,u){
     (function step(t){
       const u=Math.min(1,(t-t0)/dur), e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2, a=a0+da*e;
       cur=[r*Math.cos(a),r*Math.sin(a)]; draw();
-      if(u<1) requestAnimationFrame(step); else { z=target; cur=z.slice(); nI+=q; anim=null; draw(); out(); }
+      if(u<1) raf=requestAnimationFrame(step); else { z=target; cur=z.slice(); nI+=q; anim=null; draw(); out(); }
     })(t0);
   }
   $("rotI").onclick=()=>rotate(1);
   $("rotNeg").onclick=()=>rotate(2);
-  function reset(){ start=$("rotStart").value.split(",").map(Number); z=start.slice(); cur=z.slice(); nI=0; trail=[]; draw(); out(); }
+  function reset(){ cancelAnimationFrame(raf); anim=null; start=$("rotStart").value.split(",").map(Number); z=start.slice(); cur=z.slice(); nI=0; trail=[]; draw(); out(); }
   $("rotReset").onclick=reset; $("rotStart").onchange=reset;
   reset();
 })();
@@ -1040,7 +1040,7 @@ function cstr(re,im,u){
 /* ---------- 그림: 수직선에서 i 찾기 (3단원) ---------- */
 (function(){
   const P=prep("cvNL"), x=P.x, w=P.w, h=P.h, cx=w/2, cy=172, u=48, R=3;
-  let a=0, q=0, vA=0, vT=0, anim=null, trail=null; const queue=[];
+  let a=0, q=0, vA=0, vT=0, anim=null, raf=null, nextT=null, trail=null; const queue=[];
   const names=["3","3i","−3","−3i"];
   function draw(ang){
     x.clearRect(0,0,w,h);
@@ -1079,13 +1079,13 @@ function cstr(re,im,u){
       const p=Math.min(1,(t-t0)/dur), e=p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;
       if(vT>vA) vA=Math.min(1,vA+0.04);
       draw(a0+(a1-a0)*e);
-      if(p<1) requestAnimationFrame(step);
-      else { a=a1; q+=nq; anim=null; draw(a); out(); const n=queue.shift(); if(n) setTimeout(()=>rot(n[0],n[1]),150); }
+      if(p<1) raf=requestAnimationFrame(step);
+      else { a=a1; q+=nq; anim=null; draw(a); out(); const n=queue.shift(); if(n) nextT=setTimeout(()=>rot(n[0],n[1]),150); }
     })(t0);
   }
   $("nlNeg").onclick=()=>rot(2,"× (−1)");
   $("nlI").onclick=()=>rot(1,"× i");
-  $("nlReset").onclick=()=>{ queue.length=0; if(anim) return; a=0; q=0; vA=0; vT=0; trail=null; draw(a); out(); };
+  $("nlReset").onclick=()=>{ cancelAnimationFrame(raf); clearTimeout(nextT); anim=null; queue.length=0; a=0; q=0; vA=0; vT=0; trail=null; draw(a); out(); };
   draw(a); out();
 })();
 
