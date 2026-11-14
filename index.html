@@ -214,15 +214,39 @@
 <section class="item" id="s5">
 <h2><span class="no">5</span> 오일러 공식을 회전으로 유도하기</h2>
 <p>90° 회전을 알았으니 이제 아무 각도 <span class="m">θ</span>의 회전으로 넓혀 봅니다. <span class="greek">θ: 세타</span></p>
+<div class="lab">
+  <div class="lab-title">그림 · 오일러 공식을 네 단계로 보기</div>
+  <div class="row">
+    <button class="btn seg" type="button" data-es="1" aria-pressed="true">① 단위원 위의 점</button>
+    <button class="btn seg" type="button" data-es="2" aria-pressed="false">② 회전 두 번</button>
+    <button class="btn seg" type="button" data-es="3" aria-pressed="false">③ 아주 작은 회전</button>
+    <button class="btn seg" type="button" data-es="4" aria-pressed="false">④ 작은 회전을 n번</button>
+  </div>
+  <canvas id="cvEu" data-w="640" data-h="380"></canvas>
+  <div class="row" id="eRowTh"><label for="eTh" id="eThLab">각도 θ</label><input type="range" id="eTh" min="0" max="360" step="1" value="60"></div>
+  <div class="row" id="eRowAl"><label for="eAl" id="eAlLab">각도 α</label><input type="range" id="eAl" min="0" max="180" step="1" value="45"></div>
+  <div class="row" id="eRowN">
+    <span class="legend">곱하는 횟수 n</span>
+    <button class="btn seg" type="button" data-en="1" aria-pressed="false">1</button>
+    <button class="btn seg" type="button" data-en="2" aria-pressed="false">2</button>
+    <button class="btn seg" type="button" data-en="4" aria-pressed="false">4</button>
+    <button class="btn seg" type="button" data-en="8" aria-pressed="true">8</button>
+    <button class="btn seg" type="button" data-en="32" aria-pressed="false">32</button>
+    <button class="btn seg" type="button" data-en="128" aria-pressed="false">128</button>
+    <button class="btn alt" type="button" id="ePi">θ = π (반 바퀴)로</button>
+  </div>
+  <div class="status" id="eOut"></div>
+</div>
 <ol class="steps">
-  <li><b>길이 1인 수를 곱하면 방향만 돈다.</b> 단위원 위에서 각 <span class="m">θ</span> 방향의 점은 <span class="m">cos θ + i sin θ</span>입니다. 이 수를 곱하면 길이는 그대로이고 방향만 <span class="m">θ</span>만큼 돌아갑니다. <span class="m">θ = 90°</span>이면 <span class="m">cos 90° + i sin 90° = i</span>로, 앞 단원과 맞습니다.</li>
-  <li><b>회전 두 번은 각을 더한 회전 한 번이다.</b> <span class="m">θ</span>만큼 돌린 뒤 <span class="m">φ</span>만큼 더 돌리면 <span class="m">θ + φ</span>만큼 돈 것입니다. 이를 <span class="m">E(θ) = cos θ + i sin θ</span>로 쓰면 <span class="greek">φ: 파이</span>
-    <div class="eq"><span class="seg">E(θ) · E(φ) = E(θ + φ)</span></div>
+  <li><b>길이 1인 수를 곱하면 방향만 돈다.</b> <span class="greek">(그림 ①)</span> 단위원 위에서 각 <span class="m">θ</span> 방향의 점은 <span class="m">cos θ + i sin θ</span>입니다. 이 수를 곱하면 길이는 그대로이고 방향만 <span class="m">θ</span>만큼 돌아갑니다. <span class="m">θ = 90°</span>이면 <span class="m">cos 90° + i sin 90° = i</span>로, 앞 단원과 맞습니다.</li>
+  <li><b>회전 두 번은 각을 더한 회전 한 번이다.</b> <span class="greek">(그림 ②)</span> <span class="m">θ</span>만큼 돌린 뒤 <span class="m">α</span>만큼 더 돌리면 <span class="m">θ + α</span>만큼 돈 것입니다. 이를 <span class="m">E(θ) = cos θ + i sin θ</span>로 쓰면 <span class="greek">α: 알파</span>
+    <div class="eq"><span class="seg">E(θ) · E(α) = E(θ + α)</span></div>
     직접 전개해도 삼각함수의 덧셈정리가 그대로 나옵니다.</li>
   <li><b>곱하면 안쪽이 더해지는 함수는 지수함수다.</b> <span class="m">aˣ · aʸ = aˣ⁺ʸ</span>처럼, 곱셈을 덧셈으로 바꾸는 성질은 지수함수의 성질입니다. 따라서 <span class="m">E(θ) = e<sup>kθ</sup></span> 꼴이어야 하고, 남은 일은 상수 <span class="m">k</span>를 정하는 것뿐입니다.</li>
-  <li><b>아주 작은 회전을 보면 k가 정해진다.</b> <span class="m">θ</span>가 아주 작으면 점 1에서 거의 수직 위로 <span class="m">θ</span>만큼 움직입니다. 곧 <span class="m">E(θ) ≈ 1 + iθ</span>입니다. 여기서 <span class="m">θ</span>는 <b>라디안</b> 단위여야 합니다. <span class="m">sin θ ≈ θ</span>라는 근사는 라디안에서만 성립합니다. 한편 <span class="m">e<sup>kθ</sup> ≈ 1 + kθ</span>이므로 <span class="m">k = i</span>입니다.</li>
+  <li><b>아주 작은 회전을 보면 k가 정해진다.</b> <span class="greek">(그림 ③)</span> <span class="m">θ</span>가 아주 작으면 점 1에서 거의 수직 위로 <span class="m">θ</span>만큼 움직입니다. 곧 <span class="m">E(θ) ≈ 1 + iθ</span>입니다. 여기서 <span class="m">θ</span>는 <b>라디안</b> 단위여야 합니다. <span class="m">sin θ ≈ θ</span>라는 근사는 라디안에서만 성립합니다. 한편 <span class="m">e<sup>kθ</sup> ≈ 1 + kθ</span>이므로 <span class="m">k = i</span>입니다.</li>
 </ol>
 <div class="eq"><span class="seg">e<sup>iθ</sup> = cos θ + i sin θ</span> <span class="seg"><small>(오일러 공식)</small></span></div>
+<p>그림 ④는 이 결론을 거꾸로 확인합니다. 아주 작은 회전 <span class="m">1 + iθ/n</span>을 <span class="m">n</span>번 곱하면, <span class="m">n</span>이 커질수록 꺾은선이 원호에 붙고 끝점이 <span class="m">cos θ + i sin θ</span>에 다가갑니다. 작은 변화를 끝없이 곱해 쌓는 것이 바로 지수함수 <span class="m">e<sup>iθ</sup></span>입니다.</p>
 <p>지수에 <span class="m">i</span>가 들어가면 크기를 키우는 대신 원을 따라 <span class="m">θ</span>만큼 돌립니다. <span class="m">θ = π</span>(반 바퀴)를 넣으면 <span class="m">e<sup>iπ</sup> = −1</span>, 곧 <span class="m">e<sup>iπ</sup> + 1 = 0</span>입니다. <span class="greek">π: 파이</span></p>
 <p>무선에 필요한 핵심은 이 공식이 <b>회전과 파동을 한 줄로 묶는다</b>는 점입니다. 다음 단원부터는 이 한 줄로 교류, 리액턴스, 안테나, 수신기를 차례로 읽습니다.</p>
 </section>
@@ -874,6 +898,92 @@ function cstr(re,im,u){
   window.addEventListener('load',fit); fit();
 })();
 
+/* ---------- 그림: 오일러 공식 네 단계 (5단원) ---------- */
+(function(){
+  const P=prep("cvEu"), x=P.x, w=P.w, h=P.h, cx=215, cy=195;
+  let step=1, n=8, thS=60, th3=20;
+  const D=Math.PI/180;
+  const f2=v=>{ const r=Math.round(v*100)/100; return (Object.is(r,-0)?0:r).toFixed(2).replace("-","−"); };
+  const cz=(a,b)=>f2(a)+(b<0?" − ":" + ")+f2(Math.abs(b))+"i";
+  function axes(r,lbl){
+    x.strokeStyle=C.grid; x.lineWidth=1; x.beginPath(); x.arc(cx,cy,r,0,TAU); x.stroke();
+    x.strokeStyle=C.axis; x.lineWidth=1.3; x.beginPath(); x.moveTo(cx-r-25,cy); x.lineTo(cx+r+25,cy); x.moveTo(cx,cy+r+20); x.lineTo(cx,cy-r-20); x.stroke();
+    if(lbl!==false){ text(x,"1",cx+r+4,cy+12,C.sub,12); text(x,"−1",cx-r-4,cy+12,C.sub,12,"right"); text(x,"i",cx+6,cy-r-8,C.sub,13); text(x,"−i",cx+6,cy+r+10,C.sub,12); }
+  }
+  function arcMark(r,a0,a1,col,lab){ x.strokeStyle=col; x.lineWidth=2; x.beginPath(); x.arc(cx,cy,r,-a0,-a1,a1>a0); x.stroke(); if(lab){ const m=(a0+a1)/2; text(x,lab,cx+(r+14)*Math.cos(m),cy-(r+14)*Math.sin(m),col,13,"center"); } }
+  function panel(lines){ let y=40; lines.forEach(l=>{ if(l==="") { y+=12; return; } text(x,l[0],440,y,l[1]||C.ink,l[2]||14); y+=24; }); }
+  function draw(){
+    x.clearRect(0,0,w,h);
+    x.strokeStyle="#e6eaf0"; x.beginPath(); x.moveTo(425,15); x.lineTo(425,h-15); x.stroke();
+    if(step===1){
+      const r=140, a=thS*D, px=cx+r*Math.cos(a), py=cy-r*Math.sin(a);
+      axes(r);
+      x.setLineDash([4,4]); x.strokeStyle=C.green; x.lineWidth=1.5; x.beginPath(); x.moveTo(px,py); x.lineTo(px,cy); x.stroke();
+      x.strokeStyle=C.orange; x.beginPath(); x.moveTo(px,py); x.lineTo(cx,py); x.stroke(); x.setLineDash([]);
+      x.strokeStyle=C.orange; x.lineWidth=4; x.beginPath(); x.moveTo(cx,cy); x.lineTo(px,cy); x.stroke();
+      x.strokeStyle=C.green; x.beginPath(); x.moveTo(px,cy); x.lineTo(px,py); x.stroke();
+      arcMark(34,0,a,C.sub,"θ");
+      arrow(x,cx,cy,px,py,C.blue,3); x.fillStyle=C.blue; x.beginPath(); x.arc(px,py,5,0,TAU); x.fill();
+      panel([["① 단위원 위의 점",C.blue,15],"",["θ = "+thS+"°  ("+f2(a)+" 라디안)"],["cos θ = "+f2(Math.cos(a)),C.orange],["sin θ = "+f2(Math.sin(a)),"#2e9e5b"],"",["점 = cos θ + i sin θ"],["   = "+cz(Math.cos(a),Math.sin(a)),C.blue],"",["길이는 언제나 1",C.sub,13],[thS===90?"θ = 90° → 점이 i에 닿음":"",C.red,13]]);
+    } else if(step===2){
+      const r=140, a=thS*D, b=+$("eAl").value*D;
+      axes(r);
+      arcMark(30,0,a,C.blue,"θ"); arcMark(48,a,a+b,C.orange,"α");
+      const P1=[cx+r*Math.cos(a),cy-r*Math.sin(a)], P2=[cx+r*Math.cos(b),cy-r*Math.sin(b)], P3=[cx+r*Math.cos(a+b),cy-r*Math.sin(a+b)];
+      x.globalAlpha=.45; arrow(x,cx,cy,P2[0],P2[1],C.orange,2.5); x.globalAlpha=1;
+      arrow(x,cx,cy,P1[0],P1[1],C.blue,3);
+      arrow(x,cx,cy,P3[0],P3[1],"#2e9e5b",3.5);
+      text(x,"E(θ)",P1[0]+8,P1[1]-10,C.blue,13); text(x,"E(α)",P2[0]+8,P2[1]+12,C.orange,13); text(x,"E(θ)·E(α)",P3[0]+(Math.cos(a+b)<0?-8:8),P3[1]-12,"#2e9e5b",13,Math.cos(a+b)<0?"right":"left");
+      const pr=[Math.cos(a)*Math.cos(b)-Math.sin(a)*Math.sin(b), Math.sin(a)*Math.cos(b)+Math.cos(a)*Math.sin(b)];
+      panel([["② 회전 두 번 = 각도 더하기",C.blue,15],"",["E(θ) = "+cz(Math.cos(a),Math.sin(a)),C.blue],["E(α) = "+cz(Math.cos(b),Math.sin(b)),C.orange],"",["곱한 결과",C.sub,13],["   = "+cz(pr[0],pr[1]),"#2e9e5b"],["E(θ + α), θ + α = "+(thS+ +$("eAl").value)+"°","#2e9e5b"],"",["곱하면 각도가 더해진다",C.sub,13],["→ 지수함수의 성질과 같음",C.sub,13]]);
+    } else if(step===3){
+      const a=th3*D, S=380, ox=110, oy=330;   /* 점 1 부근 확대 */
+      x.strokeStyle=C.grid; x.lineWidth=1; x.beginPath(); x.arc(ox-S,oy,S,-0.95,0.05); x.stroke();
+      text(x,"단위원 일부(확대)",ox-6,oy-S*0.82,C.sub,11,"right");
+      x.strokeStyle=C.axis; x.lineWidth=1.3; x.beginPath(); x.moveTo(20,oy); x.lineTo(410,oy); x.stroke();
+      x.fillStyle=C.ink; x.beginPath(); x.arc(ox,oy,4,0,TAU); x.fill(); text(x,"1",ox+6,oy+14,C.ink,13);
+      const ex=ox-S+S*Math.cos(a), ey=oy-S*Math.sin(a), tx=ox, ty=oy-S*a;
+      x.strokeStyle="#2e9e5b"; x.lineWidth=3; x.beginPath(); x.arc(ox-S,oy,S,-a,0); x.stroke();
+      x.setLineDash([5,4]); x.strokeStyle=C.orange; x.lineWidth=2.5; x.beginPath(); x.moveTo(ox,oy); x.lineTo(tx,ty); x.stroke(); x.setLineDash([]);
+      x.fillStyle="#2e9e5b"; x.beginPath(); x.arc(ex,ey,5,0,TAU); x.fill(); text(x,"e^(iθ): 원 위",ex-8,ey-4,"#2e9e5b",13,"right");
+      x.fillStyle=C.orange; x.beginPath(); x.arc(tx,ty,5,0,TAU); x.fill(); text(x,"1 + iθ: 수직 위로 θ",tx+8,ty,C.orange,13);
+      const d=Math.hypot(Math.cos(a)-1,Math.sin(a)-a);
+      panel([["③ 아주 작은 회전",C.blue,15],"",["θ = "+th3+"° = "+(a).toFixed(3)+" 라디안"],["원 위의 점 = "+cz(Math.cos(a),Math.sin(a)).replace(/\.(\d\d)/g,".$1"),"#2e9e5b",13],["1 + iθ    = 1.00 + "+a.toFixed(2)+"i",C.orange,13],["두 점의 거리 = "+d.toFixed(4),C.sub,13],"",["θ가 작을수록 거의 같아짐",C.ink,13],["E(θ) ≈ 1 + iθ  →  k = i",C.red,15],"",["(각도를 라디안으로 잴 때만)",C.sub,12]]);
+    } else {
+      const a=thS*D; let z=[1,0]; const pts=[[1,0]];
+      for(let k=0;k<n;k++){ const re=z[0]-z[1]*a/n, im=z[1]+z[0]*a/n; z=[re,im]; pts.push(z); }
+      const mx=Math.max(1.05,...pts.map(p=>Math.hypot(p[0],p[1])));
+      const r=Math.min(140,170/mx);
+      axes(r);
+      x.setLineDash([5,4]); arcMark(r,0,a,"#2e9e5b"); x.setLineDash([]);
+      x.strokeStyle=C.orange; x.lineWidth=2.2; x.beginPath(); pts.forEach((p,k)=>{ const X=cx+r*p[0], Y=cy-r*p[1]; k?x.lineTo(X,Y):x.moveTo(X,Y); }); x.stroke();
+      x.fillStyle=C.orange; pts.forEach(p=>{ x.beginPath(); x.arc(cx+r*p[0],cy-r*p[1],n>16?1.8:3,0,TAU); x.fill(); });
+      const E=[Math.cos(a),Math.sin(a)];
+      x.fillStyle="#2e9e5b"; x.beginPath(); x.arc(cx+r*E[0],cy-r*E[1],5,0,TAU); x.fill();
+      const err=Math.hypot(z[0]-E[0],z[1]-E[1]);
+      panel([["④ 작은 회전을 n번 곱하기",C.blue,15],"",["(1 + iθ/n)ⁿ,  n = "+n,C.orange],["   = "+cz(z[0],z[1]),C.orange],["e^(iθ) = cos θ + i sin θ","#2e9e5b",13],["   = "+cz(E[0],E[1]),"#2e9e5b"],["두 점의 거리 = "+err.toFixed(3),C.sub,13],"",["θ = "+thS+"°"+(thS===180?"  (= π)":""),C.ink,13],[n>=128&&thS===180?"끝점 ≈ −1 → e^(iπ) = −1":"n이 커질수록 원호에 붙음",n>=128&&thS===180?C.red:C.sub,13]]);
+    }
+  }
+  function setStep(sn){
+    step=sn; document.querySelectorAll("[data-es]").forEach(b=>b.setAttribute("aria-pressed",+b.dataset.es===sn?"true":"false"));
+    const th=$("eTh");
+    if(sn===3){ th.min=1; th.max=40; th.value=th3; $("eThLab").textContent="작은 각도 θ"; }
+    else { th.min=0; th.max=360; th.value=thS; $("eThLab").textContent="각도 θ"; }
+    $("eRowAl").hidden=sn!==2; $("eRowN").hidden=sn!==4;
+    upd(); draw();
+  }
+  function upd(){
+    const v=Math.round(+$("eTh").value); if(step===3) th3=v; else thS=v;
+    const msg={1:"슬라이더로 θ를 움직이면 점이 원을 따라 돕니다. 길이는 늘 1입니다.",2:"θ만큼 돈 뒤 α만큼 더 돌면, 결과는 θ + α 방향입니다.",3:"θ를 줄일수록 원 위의 점과 1 + iθ가 겹쳐 갑니다.",4:"n을 늘리면 주황 꺾은선이 초록 원호에 붙습니다."}[step];
+    $("eOut").textContent=msg;
+  }
+  document.querySelectorAll("[data-es]").forEach(b=>b.onclick=()=>setStep(+b.dataset.es));
+  document.querySelectorAll("[data-en]").forEach(b=>b.onclick=()=>{ n=+b.dataset.en; document.querySelectorAll("[data-en]").forEach(c=>c.setAttribute("aria-pressed",c===b?"true":"false")); draw(); });
+  $("ePi").onclick=()=>{ if(step!==4) setStep(4); $("eTh").value=180; upd(); draw(); };
+  $("eTh").oninput=()=>{ upd(); draw(); }; $("eAl").oninput=draw;
+  setStep(1);
+})();
+
 /* ---------- 그림: 수직선에서 i 찾기 (3단원) ---------- */
 (function(){
   const P=prep("cvNL"), x=P.x, w=P.w, h=P.h, cx=w/2, cy=172, u=48, R=3;
@@ -1025,11 +1135,13 @@ window.NARR = [
   {"s": "s3", "t": "실험 상자에서 확인해 보겠습니다. 시작점 3 더하기 사 아이에 i를 곱하면 화살표가 마이너스 4 더하기 삼 아이로 돌아갑니다. 계속 곱하면 마이너스 3 빼기 사 아이, 4 빼기 삼 아이를 거쳐 네 번째에 처음 자리로 돌아옵니다. 그동안 화살표의 길이는 5로 변하지 않습니다. 곱셈 한 번이 회전 한 번이라는 이 감각이, 뒤에 나올 임피던스와 위상을 이해하는 열쇠입니다.", "c": 9, "a": [["select", "rotStart", "3,4"], ["at", 1, [["click", "#rotI"]]], ["at", 2, [["click", "#rotI"], ["wait", 1100], ["click", "#rotI"], ["wait", 1100], ["click", "#rotI"]]]]},
   {"s": "s4", "t": "허수를 다룰 때 흔히 걸려 넘어지는 곳이 두 군데 있습니다. 첫째는 루트를 합치는 규칙입니다. 루트 마이너스 1 곱하기 루트 마이너스 1을 루트 안으로 합쳐 루트 1, 곧 1로 계산하면 틀립니다. 답은 i 곱하기 i, 마이너스 1입니다. 루트를 합치는 규칙은 두 수가 모두 0 이상일 때만 쓸 수 있습니다.", "c": 1},
   {"s": "s4", "t": "둘째는 크기 비교입니다. i가 0보다 크냐는 질문은, 위쪽이 오른쪽보다 크냐는 질문과 같아서 의미가 없습니다. 대신 원점에서의 거리인 절댓값은 비교할 수 있습니다. 3 더하기 사 아이의 절댓값은 5입니다. 무선에서는 이 절댓값이 신호의 세기, 임피던스의 크기, 반사계수의 크기가 됩니다.", "c": 2},
-  {"s": "s5", "t": "90도 회전을 알았으니 이제 아무 각도 세타로 넓혀 봅니다. 길이가 1인 수를 곱하면 길이는 그대로이고 방향만 돌아갑니다. 단위원 위에서 각 세타 방향에 있는 점은 코사인 세타 더하기 i 사인 세타입니다. 세타가 90도이면 이 값은 i가 되어 앞의 이야기와 맞습니다.", "c": 1},
-  {"s": "s5", "t": "세타만큼 돌린 뒤 파이만큼 더 돌리면, 세타 더하기 파이만큼 돈 것입니다. 곱하면 안쪽 각도가 더해지는 셈인데, 곱셈을 덧셈으로 바꾸는 성질은 지수함수의 성질입니다. 그래서 이 수는 e의 k세타 제곱 꼴이어야 하고, 남은 일은 상수 k를 정하는 것뿐입니다.", "c": 2},
-  {"s": "s5", "t": "아주 작은 각도만큼 돌리면, 점 1에서 거의 수직 위로 세타만큼 움직입니다. 곧 1 더하기 i세타입니다. 한편 e의 k세타 제곱은 1 더하기 k세타로 근사되므로, k는 i입니다. 이 근사는 각도를 라디안으로 잴 때만 성립합니다.", "c": 2},
-  {"s": "s5", "t": "이렇게 해서 e의 i세타 제곱은 코사인 세타 더하기 i 사인 세타라는 오일러 공식이 나옵니다. 지수에 i가 들어가면 크기를 키우는 대신 원을 따라 돌립니다. 세타에 파이를 넣으면 반 바퀴, 곧 마이너스 1이 되어, e의 i파이 제곱 더하기 1은 0이라는 식이 나옵니다.", "c": 3},
-  {"s": "s5", "t": "무선에 필요한 핵심은 이 공식이 회전과 파동을 한 줄로 묶는다는 점입니다. 이제 이 한 줄로 교류, 리액턴스, 안테나, 수신기를 차례로 읽어 보겠습니다.", "c": 5},
+  {"s": "s5", "c": 1, "t": "90도 회전을 알았으니 이제 아무 각도 세타로 넓혀 봅니다. 네 단계로 나눠 그림과 함께 따라가 보겠습니다."},
+  {"s": "s5", "c": 2, "t": "첫 단계는 단위원 위의 점입니다. 원점에서 길이 1인 화살표를 각 세타만큼 돌리면, 그 끝점의 가로 그림자가 코사인 세타, 세로 그림자가 사인 세타입니다. 그래서 이 점은 코사인 세타 더하기 i 사인 세타로 쓸 수 있습니다. 세타를 90도로 두면 점은 정확히 i에 닿습니다. 세타를 더 키워도 점은 원을 벗어나지 않고, 길이는 늘 1입니다. 길이가 1인 수를 곱하면 크기는 그대로이고 방향만 돌아간다는 뜻입니다.", "a": [["click", "[data-es=\"1\"]"], ["range", "eTh", 60, 600], ["at", 3, [["range", "eTh", 90, 1400]]], ["at", 4, [["range", "eTh", 220, 1800]]]]},
+  {"s": "s5", "c": 2, "t": "둘째 단계는 회전 두 번입니다. 세타만큼 돌린 파란 화살표에, 알파만큼 돌리는 주황 화살표를 곱합니다. 결과인 초록 화살표는 세타 더하기 알파 방향에 놓입니다. 곱하면 각도가 더해지는 것입니다. 각도를 바꿔도 이 관계는 그대로입니다. 곱셈이 덧셈으로 바뀌는 이 성질은 지수함수의 성질과 같습니다. 그래서 이 수는 e의 k세타 제곱 꼴이어야 하고, 남은 일은 상수 k를 정하는 것뿐입니다.", "a": [["click", "[data-es=\"2\"]"], ["range", "eTh", 60, 600], ["at", 4, [["range", "eAl", 100, 1500]]]]},
+  {"s": "s5", "c": 2, "t": "셋째 단계에서 k가 정해집니다. 점 1 근처를 크게 확대했습니다. 아주 작은 각도만큼 돌리면 점은 원을 따라 움직이지만, 거의 수직 위로 세타만큼 올라간 것과 같습니다. 곧 1 더하기 i세타입니다. 각도를 줄일수록 초록 점과 주황 점이 겹쳐 갑니다. 한편 e의 k세타 제곱은 세타가 작을 때 1 더하기 k세타이므로, k는 i입니다. 이 근사는 각도를 라디안으로 잴 때만 성립합니다.", "a": [["click", "[data-es=\"3\"]"], ["range", "eTh", 25, 600], ["at", 4, [["range", "eTh", 4, 1800]]]]},
+  {"s": "s5", "c": 2, "t": "넷째 단계는 거꾸로 확인하는 그림입니다. 아주 작은 회전 1 더하기 i세타 나누기 n을 n번 곱해 봅니다. n이 1이면 한 번에 수직으로 올라가 원에서 크게 벗어납니다. n을 4, 8로 늘리면 주황 꺾은선이 원호에 가까워지고, 32번이면 거의 붙습니다. 작은 변화를 끝없이 곱해 쌓는 것이 지수함수이고, 그 결과가 원 위의 점, 곧 e의 i세타 제곱입니다. 세타를 반 바퀴인 파이로 두고 n을 128까지 늘리면, 끝점은 마이너스 1에 닿습니다.", "a": [["click", "[data-es=\"4\"]"], ["click", "[data-en=\"1\"]"], ["range", "eTh", 120, 600], ["at", 3, [["click", "[data-en=\"4\"]"], ["wait", 900], ["click", "[data-en=\"8\"]"], ["wait", 900], ["click", "[data-en=\"32\"]"]]], ["at", 5, [["click", "[data-en=\"128\"]"], ["range", "eTh", 180, 1500]]]]},
+  {"s": "s5", "c": 4, "t": "이렇게 해서 e의 i세타 제곱은 코사인 세타 더하기 i 사인 세타라는 오일러 공식이 나옵니다. 지수에 i가 들어가면 크기를 키우는 대신 원을 따라 돌립니다. 세타에 파이를 넣으면 반 바퀴, 곧 마이너스 1이 되어, e의 i파이 제곱 더하기 1은 0이라는 식이 나옵니다."},
+  {"s": "s5", "c": 7, "t": "무선에 필요한 핵심은 이 공식이 회전과 파동을 한 줄로 묶는다는 점입니다. 이제 이 한 줄로 교류, 리액턴스, 안테나, 수신기를 차례로 읽어 보겠습니다."},
   {"s": "s6", "t": "송신기 출력도, 안테나에 흐르는 전류도 모두 사인파입니다. 사인파는 원 위를 일정한 속도로 도는 화살표의 그림자로 볼 수 있습니다.", "c": 1},
   {"s": "s6", "t": "화살표의 길이가 진폭, 출발 각도가 위상, 도는 속도가 주파수입니다. 7.1메가헤르츠 신호라면 이 화살표는 1초에 710만 바퀴를 돕니다. 회로 안의 전압과 전류는 모두 같은 속도로 돌기 때문에, 공통인 회전은 떼어 두고 길이와 출발 각도만 담은 복소수로 계산합니다. 이것을 페이저라고 부릅니다.", "c": 4},
   {"s": "s6", "t": "그림에서 파란 화살표가 돌고, 그 세로 그림자가 주황색 파형으로 그려집니다. 회전 속도를 올리면 파형이 촘촘해지는데, 이것이 주파수가 높아지는 모습입니다. 본문의 식은 가로 그림자인 코사인으로 신호를 정의했고, 그림은 세로 그림자인 사인을 그렸습니다. 두 그림자는 같은 회전을 다른 방향에서 본 것이라 90도 차이만 납니다.", "c": 5, "a": [["press", "#phPlay", true], ["at", 1, [["range", "phSpeed", 2.6, 1500]]], ["at", 2, [["range", "phSpeed", 1.2, 1200]]]]},
