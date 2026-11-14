@@ -22,7 +22,8 @@
   .toc ol{margin:.3em 0;padding-left:1.3em;columns:2;column-gap:2em}
   .toc a{color:var(--blue);text-decoration:none}
   .toc a:hover{text-decoration:underline}
-  .eq{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:1.18rem;text-align:center;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:.8em 0;overflow-x:auto;white-space:nowrap}
+  .eq{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:1.18rem;text-align:center;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:.8em 0;overflow-x:auto;white-space:normal;line-height:1.7}
+  .eq .seg{display:inline-block;white-space:nowrap;margin:0 .18em}
   .eq small{font-family:inherit;font-size:.8rem;color:var(--sub)}
   .m{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:1.06em;white-space:nowrap}
   .steps{counter-reset:st;list-style:none;padding:0}
@@ -142,7 +143,7 @@
 <section class="item" id="s1">
 <h2><span class="no">1</span> 수직선에는 자리가 없다</h2>
 <p>(−1)×(−1) = +1이고 (+1)×(+1) = +1입니다. 0은 제곱해도 0입니다. 수직선 위의 어떤 수를 골라 제곱해도 결과는 0 이상이 됩니다. 따라서</p>
-<div class="eq">x² = −1</div>
+<div class="eq"><span class="seg">x² = −1</span></div>
 <p>의 답은 수직선 위 어디에도 없습니다. 이 답에 이름을 붙인 것이 <b>허수 단위</b> <span class="m">i</span>(imaginary unit)입니다. 실수 부분이 전혀 없이 <span class="m">2i</span>, <span class="m">−5i</span>처럼 <span class="m">i</span>의 실수배로만 된 수를 <b>순허수</b>라고 합니다.</p>
 <div class="note">전기·무선에서는 전류를 <span class="m">i</span>로 쓰기 때문에 허수 단위를 <b><span class="m">j</span></b>로 씁니다. 이 페이지도 수학 이야기에서는 <span class="m">i</span>, 회로와 전파 이야기에서는 <span class="m">j</span>를 씁니다. 둘은 같은 수입니다.</div>
 </section>
@@ -152,9 +153,9 @@
 <h2><span class="no">2</span> 허수의 역사: 방정식에서 교류 회로까지</h2>
 <p><b>1545년, 카르다노.</b> "더해서 10, 곱해서 40인 두 수"를 구하면 <span class="m">5 + √−15</span>와 <span class="m">5 − √−15</span>가 나옵니다. 계산은 맞지만 음수의 제곱근이었고, 카르다노는 이것을 교묘하지만 쓸모없는 결과로 여겨 덮어 두었습니다.</p>
 <p><b>1572년경, 봄벨리.</b> 방정식 <span class="m">x³ = 15x + 4</span>의 답이 4라는 것은 대입만 해 봐도 압니다. 그런데 당시의 3차방정식 공식으로 풀면 중간에 <span class="m">√−121</span>이 끼어듭니다.</p>
-<div class="eq">x = ∛(2 + √−121) + ∛(2 − √−121)</div>
+<div class="eq"><span class="seg">x = ∛(2 + √−121) + ∛(2 − √−121)</span></div>
 <p>봄벨리는 <span class="m">√−1</span>을 보통 수처럼 계산해 보기로 했습니다. <span class="m">√−121 = 11i</span>이고, 직접 세제곱해 보면</p>
-<div class="eq">(2 + i)³ = 8 + 12i + 6i² + i³ = 8 + 12i − 6 − i = 2 + 11i</div>
+<div class="eq"><span class="seg">(2 + i)³ = 8 + 12i + 6i² + i³</span> <span class="seg">= 8 + 12i − 6 − i</span> <span class="seg">= 2 + 11i</span></div>
 <p>이므로 <span class="m">∛(2 + 11i) = 2 + i</span>, 마찬가지로 <span class="m">∛(2 − 11i) = 2 − i</span>입니다. 둘을 더하면 허수 부분이 서로 지워지고 정확히 <b>4</b>가 남습니다. 허수는 실수 답으로 가는 길목에 놓인 다리였습니다.</p>
 <p>계산이 맞는다고 곧바로 받아들여진 것은 아닙니다. 1637년 데카르트는 이런 근을 "상상의(imaginaire)" 근이라 불렀고, 이 이름이 지금의 imaginary number로 남았습니다. 1777년 오일러가 <span class="m">√−1</span>을 기호 <span class="m">i</span>로 쓰기 시작했지만, 이 수가 "어디에 있는지"를 보여 주는 그림은 한동안 없었습니다.</p>
 <p>그림은 덴마크-노르웨이의 측량사 카스파르 베셀(Caspar Wessel, 1799), 아르강(1806), 가우스(1831)가 각각 내놓았습니다. 베셀 함수로 알려진 천문학자 프리드리히 베셀(Bessel)과는 다른 사람입니다. 복소수를 평면 위의 점으로, 곱셈을 회전과 확대로 본 것입니다. 이 그림이 다음 단원의 내용입니다.</p>
@@ -185,7 +186,7 @@
 </table>
 <p>네 번에 한 바퀴이므로 <span class="m">i¹⁰⁰</span>은 25바퀴를 돌고 제자리, 곧 1입니다.</p>
 <p><b>예제.</b> 점 (3, 4)를 원점 중심으로 90° 돌리면? 이 점을 <span class="m">3 + 4i</span>로 쓰고 <span class="m">i</span>를 곱합니다.</p>
-<div class="eq">(3 + 4i) × i = 3i + 4i² = −4 + 3i</div>
+<div class="eq"><span class="seg">(3 + 4i) × i = 3i + 4i²</span> <span class="seg">= −4 + 3i</span></div>
 <p>점 (−4, 3)이 나오고, 그려 보면 정확히 90° 돌아가 있습니다. 회전이 곱셈 한 번으로 끝납니다. 길이도 그대로 5입니다.</p>
 
 <div class="lab">
@@ -216,12 +217,12 @@
 <ol class="steps">
   <li><b>길이 1인 수를 곱하면 방향만 돈다.</b> 단위원 위에서 각 <span class="m">θ</span> 방향의 점은 <span class="m">cos θ + i sin θ</span>입니다. 이 수를 곱하면 길이는 그대로이고 방향만 <span class="m">θ</span>만큼 돌아갑니다. <span class="m">θ = 90°</span>이면 <span class="m">cos 90° + i sin 90° = i</span>로, 앞 단원과 맞습니다.</li>
   <li><b>회전 두 번은 각을 더한 회전 한 번이다.</b> <span class="m">θ</span>만큼 돌린 뒤 <span class="m">φ</span>만큼 더 돌리면 <span class="m">θ + φ</span>만큼 돈 것입니다. 이를 <span class="m">E(θ) = cos θ + i sin θ</span>로 쓰면 <span class="greek">φ: 파이</span>
-    <div class="eq">E(θ) · E(φ) = E(θ + φ)</div>
+    <div class="eq"><span class="seg">E(θ) · E(φ) = E(θ + φ)</span></div>
     직접 전개해도 삼각함수의 덧셈정리가 그대로 나옵니다.</li>
   <li><b>곱하면 안쪽이 더해지는 함수는 지수함수다.</b> <span class="m">aˣ · aʸ = aˣ⁺ʸ</span>처럼, 곱셈을 덧셈으로 바꾸는 성질은 지수함수의 성질입니다. 따라서 <span class="m">E(θ) = e<sup>kθ</sup></span> 꼴이어야 하고, 남은 일은 상수 <span class="m">k</span>를 정하는 것뿐입니다.</li>
   <li><b>아주 작은 회전을 보면 k가 정해진다.</b> <span class="m">θ</span>가 아주 작으면 점 1에서 거의 수직 위로 <span class="m">θ</span>만큼 움직입니다. 곧 <span class="m">E(θ) ≈ 1 + iθ</span>입니다. 여기서 <span class="m">θ</span>는 <b>라디안</b> 단위여야 합니다. <span class="m">sin θ ≈ θ</span>라는 근사는 라디안에서만 성립합니다. 한편 <span class="m">e<sup>kθ</sup> ≈ 1 + kθ</span>이므로 <span class="m">k = i</span>입니다.</li>
 </ol>
-<div class="eq">e<sup>iθ</sup> = cos θ + i sin θ &nbsp;&nbsp;<small>(오일러 공식)</small></div>
+<div class="eq"><span class="seg">e<sup>iθ</sup> = cos θ + i sin θ</span> <span class="seg"><small>(오일러 공식)</small></span></div>
 <p>지수에 <span class="m">i</span>가 들어가면 크기를 키우는 대신 원을 따라 <span class="m">θ</span>만큼 돌립니다. <span class="m">θ = π</span>(반 바퀴)를 넣으면 <span class="m">e<sup>iπ</sup> = −1</span>, 곧 <span class="m">e<sup>iπ</sup> + 1 = 0</span>입니다. <span class="greek">π: 파이</span></p>
 <p>무선에 필요한 핵심은 이 공식이 <b>회전과 파동을 한 줄로 묶는다</b>는 점입니다. 다음 단원부터는 이 한 줄로 교류, 리액턴스, 안테나, 수신기를 차례로 읽습니다.</p>
 </section>
@@ -230,7 +231,7 @@
 <section class="item" id="s6">
 <h2><span class="no">6</span> 교류는 돌아가는 화살표의 그림자</h2>
 <p>송신기 출력이든 안테나에 흐르는 전류든, 무선의 신호는 사인파입니다. 사인파는 원 위를 일정한 속도로 도는 화살표의 <b>그림자</b>로 볼 수 있습니다.</p>
-<div class="eq">v(t) = V cos(ωt + φ) = Re{ V e<sup>j(ωt + φ)</sup> } &nbsp;&nbsp;<small>ω = 2πf</small></div>
+<div class="eq"><span class="seg">v(t) = V cos(ωt + φ)</span> <span class="seg">= Re{ V e<sup>j(ωt + φ)</sup> }</span> <span class="seg"><small>ω = 2πf</small></span></div>
 <p class="greek">ω: 오메가 (각진동수, 초당 회전각)</p>
 <p>화살표 길이 <span class="m">V</span>가 진폭, 출발 각도 <span class="m">φ</span>가 위상, 회전 속도 <span class="m">ω</span>가 주파수입니다. 7.1 MHz라면 이 화살표는 1초에 710만 바퀴를 돕니다. 한 회로 안의 전압과 전류는 모두 같은 속도로 돌기 때문에, 공통인 회전 <span class="m">e<sup>jωt</sup></span>는 떼어 두고 길이와 출발 각도만 담은 복소수 <span class="m">V e<sup>jφ</sup></span>로 계산합니다. 이것을 <b>페이저</b>(phasor)라고 합니다.</p>
 <div class="lab">
@@ -245,7 +246,7 @@
 </div>
 <p>위 식은 가로 그림자(실수부, cos)로 신호를 정의했고, 실험에서는 오른쪽으로 흐르게 그리기 쉬운 세로 그림자(허수부, sin)를 그렸습니다. 두 그림자는 같은 회전을 다른 방향에서 본 것이라 모양은 같고 90° 차이만 납니다.</p>
 <p>페이저의 가장 큰 쓸모는 <b>미분이 곱셈으로 바뀐다</b>는 점입니다.</p>
-<div class="eq">d/dt e<sup>jωt</sup> = jω · e<sup>jωt</sup></div>
+<div class="eq"><span class="seg">d/dt e<sup>jωt</sup> = jω · e<sup>jωt</sup></span></div>
 <p>시간에 대해 미분하는 일이 "<span class="m">jω</span>를 곱하는 일", 곧 <b>90° 앞으로 돌리고 ω배 키우는 일</b>이 됩니다. 코일과 콘덴서는 바로 이 미분으로 움직이는 부품입니다.</p>
 </section>
 
@@ -282,10 +283,10 @@
 <text x="505" y="215" text-anchor="middle" fill="#6b7588">회로 기호</text>
 </svg><figcaption>코일은 자기장에, 콘덴서는 전기장에 에너지를 잠시 담았다가 돌려주고(허수부), 저항은 열로 내보냅니다(실수부).</figcaption></figure>
 <p><b>코일(L).</b> 코일 전압은 전류의 변화율에 비례합니다: <span class="m">v = L di/dt</span>. 미분은 <span class="m">jω</span>를 곱하는 일이므로</p>
-<div class="eq">V = jωL · I &nbsp;→&nbsp; Z<sub>L</sub> = jωL</div>
+<div class="eq"><span class="seg">V = jωL · I</span> <span class="seg">→ Z<sub>L</sub> = jωL</span></div>
 <p>전압이 전류보다 90° 앞서고, 거꾸로 말하면 <b>전류가 전압보다 90° 늦게</b> 따라옵니다. 코일은 전류의 변화를 싫어하기 때문입니다.</p>
 <p><b>콘덴서(C).</b> 콘덴서 전류는 전압의 변화율에 비례합니다: <span class="m">i = C dv/dt</span>. 같은 방법으로</p>
-<div class="eq">I = jωC · V &nbsp;→&nbsp; Z<sub>C</sub> = 1/(jωC) = −j/(ωC)</div>
+<div class="eq"><span class="seg">I = jωC · V</span> <span class="seg">→ Z<sub>C</sub> = 1/(jωC)</span> <span class="seg">= −j/(ωC)</span></div>
 <p><span class="m">1/j = −j</span>이므로(양변에 <span class="m">j</span>를 곱해 보면 <span class="m">1 = −j² = 1</span>) 콘덴서는 허수축의 <b>아래쪽</b>에 놓입니다. 전류가 전압보다 90° <b>앞섭니다</b>.</p>
 <p><b>순허수의 의미.</b> 저항의 임피던스는 실수이고, 저항에 들어간 에너지는 열로 나가 돌아오지 않습니다. 코일과 콘덴서의 임피던스는 순허수이고, 반 주기 동안 자기장이나 전기장에 에너지를 담았다가 다음 반 주기에 고스란히 돌려줍니다. 정리하면 <b>실수부는 빠져나가는 에너지, 허수부는 오갔다 돌아오는 에너지</b>입니다. 아래 실험의 전력 그래프 <span class="m">p = v·i</span>에서 코일과 콘덴서는 +와 − 넓이가 같아 평균이 0이고, 저항은 늘 + 쪽에만 있습니다.</p>
 <p><b>예.</b> 7.1 MHz에서 1 µH 코일은 <span class="m">ωL = 2π × 7.1×10⁶ × 10⁻⁶ ≈ 44.6 Ω</span>, 곧 <span class="m">Z = j44.6 Ω</span>입니다. 같은 주파수에서 100 pF 콘덴서는 <span class="m">Z ≈ −j224 Ω</span>입니다.</p>
@@ -309,14 +310,14 @@
   <div class="status" id="lcOut"></div>
 </div>
 <p><b>공진은 허수부가 0이 되는 곳.</b> 코일과 콘덴서를 직렬로 두면 <span class="m">Z = jωL − j/(ωC)</span>입니다. 위쪽과 아래쪽 화살표가 같은 길이가 되어 서로 지워지는 주파수가 공진 주파수입니다.</p>
-<div class="eq">ωL = 1/(ωC) &nbsp;→&nbsp; ω₀ = 1/√(LC) &nbsp;→&nbsp; f₀ = 1/(2π√(LC))</div>
+<div class="eq"><span class="seg">ωL = 1/(ωC)</span> <span class="seg">→ ω₀ = 1/√(LC)</span> <span class="seg">→ f₀ = 1/(2π√(LC))</span></div>
 </section>
 
 <!-- 8 -->
 <section class="item" id="s8">
 <h2><span class="no">8</span> 안테나 임피던스 R + jX와 SWR</h2>
 <p>안테나 급전점도 하나의 복소수로 보입니다.</p>
-<div class="eq">Z = R + jX</div>
+<div class="eq"><span class="seg">Z = R + jX</span></div>
 <figure class="fig"><svg viewBox="0 0 640 260" font-family="'Noto Sans KR','Apple SD Gothic Neo',sans-serif" font-size="12"><defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
 <ellipse cx="320" cy="62" rx="150" ry="38" fill="#1f5fbf" opacity=".10"/>
 <path d="M110,62 H313 M327,62 H530" stroke="#1d2330" stroke-width="4" stroke-linecap="round"/>
@@ -345,7 +346,7 @@
 </ul>
 <p>가는 도선으로 만든 반파장 다이폴의 자유공간 이론값은 <span class="m">73 + j42.5 Ω</span>입니다. 정확히 반파장 길이에서는 허수부가 남기 때문에, 실제로는 반파장보다 몇 % 짧게 잘라 <span class="m">X</span>를 0으로 맞춥니다.</p>
 <p><b>SWR도 복소수 계산이다.</b> 50 Ω 급전선 쪽에서 본 반사계수 <span class="m">Γ</span>는 복소수 나눗셈입니다. <span class="greek">Γ: 감마</span></p>
-<div class="eq">Γ = (Z − 50) / (Z + 50), &nbsp;&nbsp; SWR = (1 + |Γ|) / (1 − |Γ|)</div>
+<div class="eq"><span class="seg">Γ = (Z − 50) / (Z + 50),</span> <span class="seg">SWR = (1 + |Γ|) / (1 − |Γ|)</span></div>
 <p>실수부가 정확히 50 Ω이어도 허수부가 있으면 반사가 생깁니다. <span class="m">Z = 50 + j50</span>이면 <span class="m">|Γ| ≈ 0.447</span>, SWR은 약 2.6입니다. 안테나 튜너가 하는 일은 반대 부호의 <span class="m">jX</span>를 더해 허수부를 지우고, 실수부를 50 Ω으로 옮기는 것입니다.</p>
 <div class="lab">
   <div class="lab-title">실험 ④ 급전점 임피던스를 움직여 SWR 보기</div>
@@ -400,7 +401,7 @@
 <h2><span class="no">10</span> SDR의 I/Q: 하드웨어 속의 허수</h2>
 <p>지금까지 허수는 계산을 쉽게 하는 도구였습니다. SDR 수신기 안에서는 허수부가 <b>실제 전선 한 가닥</b>으로 존재합니다.</p>
 <p>수신기는 들어온 신호를 국부발진기와 섞어 낮은 주파수로 내립니다. 이때 발진기를 하나가 아니라 <b>90° 어긋난 두 개</b>(cos와 −sin)로 씁니다. 두 갈래 출력이 <b>I</b>(In-phase, 동상)와 <b>Q</b>(Quadrature, 직교)이고, 소프트웨어는 이것을 복소수 하나로 다룹니다.</p>
-<div class="eq">s(t) = I(t) + j Q(t)</div>
+<div class="eq"><span class="seg">s(t) = I(t) + j Q(t)</span></div>
 <figure class="fig"><svg viewBox="0 0 640 250" font-family="'Noto Sans KR','Apple SD Gothic Neo',sans-serif" font-size="12"><defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
 <path d="M30,125 V80 M18,80 L30,100 L42,80 Z" stroke="#1d2330" stroke-width="2" fill="none"/>
 <path d="M30,125 H62" stroke="#1d2330" stroke-width="2" marker-end="url(#ah3)"/>
@@ -459,8 +460,8 @@
 <path d="M575,120 V75 M563,75 L575,95 L587,75 Z" stroke="#1d2330" stroke-width="2" fill="none"/><path d="M548,120 H575" stroke="#1d2330" stroke-width="2"/>
 </svg><figcaption>위상형 SSB 송신기의 뼈대. 음성과 반송파를 각각 90° 어긋난 두 갈래로 만들어 곱한 뒤 합칩니다.</figcaption></figure>
 <p>두 갈래를 식으로 풀면 이렇습니다(<span class="m">ω<sub>m</sub></span>: 음성, <span class="m">ω<sub>c</sub></span>: 반송파).</p>
-<div class="eq">I 갈래: cos ω<sub>m</sub>t · cos ω<sub>c</sub>t = ½cos(ω<sub>c</sub>−ω<sub>m</sub>)t + ½cos(ω<sub>c</sub>+ω<sub>m</sub>)t</div>
-<div class="eq">Q 갈래: sin ω<sub>m</sub>t · sin ω<sub>c</sub>t = ½cos(ω<sub>c</sub>−ω<sub>m</sub>)t − ½cos(ω<sub>c</sub>+ω<sub>m</sub>)t</div>
+<div class="eq"><span class="seg">I 갈래: cos ω<sub>m</sub>t · cos ω<sub>c</sub>t</span> <span class="seg">= ½cos(ω<sub>c</sub>−ω<sub>m</sub>)t</span> <span class="seg">+ ½cos(ω<sub>c</sub>+ω<sub>m</sub>)t</span></div>
+<div class="eq"><span class="seg">Q 갈래: sin ω<sub>m</sub>t · sin ω<sub>c</sub>t</span> <span class="seg">= ½cos(ω<sub>c</sub>−ω<sub>m</sub>)t</span> <span class="seg">− ½cos(ω<sub>c</sub>+ω<sub>m</sub>)t</span></div>
 <p>아래쪽 측파대(<span class="m">ω<sub>c</sub>−ω<sub>m</sub></span>)는 두 갈래에서 부호가 같고, 위쪽(<span class="m">ω<sub>c</sub>+ω<sub>m</sub></span>)은 부호가 반대입니다. 그래서 <b>더하면 위쪽이 지워져 LSB</b>, <b>빼면 아래쪽이 지워져 USB</b>가 남습니다. 필터 없이 SSB를 만드는 이 방식은 오늘날 SDR 송신기의 기본 구조입니다.</p>
 <div class="lab">
   <div class="lab-title">실험 ⑦ 더하면 LSB, 빼면 USB</div>
@@ -480,13 +481,13 @@
 <section class="item" id="s11">
 <h2><span class="no">11</span> 원자가 내는 전파</h2>
 <p>양자역학의 기본 방정식인 슈뢰딩거 방정식에는 <span class="m">i</span>가 처음부터 들어 있습니다. <span class="greek">ψ: 프사이</span></p>
-<div class="eq">iħ ∂ψ/∂t = Ĥψ</div>
+<div class="eq"><span class="seg">iħ ∂ψ/∂t = Ĥψ</span></div>
 <p class="greek">ħ: 플랑크 상수 h를 2π로 나눈 값</p>
 <p>에너지가 <span class="m">E</span>로 정해진 상태의 파동함수는 시간에 따라 이렇게 변합니다.</p>
-<div class="eq">ψ(x, t) = φ(x) · e<sup>−iEt/ħ</sup></div>
+<div class="eq"><span class="seg">ψ(x, t) = φ(x) · e<sup>−iEt/ħ</sup></span></div>
 <p>6단원의 페이저와 같은 모양입니다. 원자의 상태는 각진동수 <span class="m">E/ħ</span>로 돌아가는 화살표를 달고 있습니다. 실제로 관측되는 확률은 <span class="m">|ψ|²</span>, 곧 화살표의 길이에서 나오므로 화살표가 돌아도 변하지 않습니다. 그래서 이런 상태를 <b>정상 상태</b>라고 부릅니다.</p>
 <p>두 에너지 상태가 섞이면 이야기가 달라집니다. 두 화살표가 서로 다른 속도로 돌기 때문에 그 차이만큼 맥놀이가 생기고, 원자는 그 주파수의 전자기파를 내거나 흡수합니다.</p>
-<div class="eq">f = (E₂ − E₁) / h</div>
+<div class="eq"><span class="seg">f = (E₂ − E₁) / h</span></div>
 <p>이 차이가 아주 작으면 원자가 내는 것은 빛이 아니라 <b>전파</b>입니다.</p>
 <figure class="fig"><svg viewBox="0 0 640 190" font-family="'Noto Sans KR','Apple SD Gothic Neo',sans-serif" font-size="12"><defs><marker id="ah5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
 <circle cx="90" cy="85" r="20" fill="#e8a3a0" stroke="#c0392b" stroke-width="2"/><text x="90" y="90" text-anchor="middle" font-weight="700">p</text>
@@ -514,7 +515,7 @@
 <section class="item" id="s12">
 <h2><span class="no">12</span> 덤: i의 i제곱</h2>
 <p><span class="m">i</span>는 단위원 위 90° 방향의 점이므로 <span class="m">i = e<sup>iπ/2</sup></span>입니다. 양변을 <span class="m">i</span>제곱하면</p>
-<div class="eq">iⁱ = (e<sup>iπ/2</sup>)ⁱ = e<sup>i·i·π/2</sup> = e<sup>−π/2</sup> ≈ 0.2079</div>
+<div class="eq"><span class="seg">iⁱ = (e<sup>iπ/2</sup>)ⁱ</span> <span class="seg">= e<sup>i·i·π/2</sup></span> <span class="seg">= e<sup>−π/2</sup></span> <span class="seg">≈ 0.2079</span></div>
 <p>허수끼리의 거듭제곱인데 결과는 실수입니다. 지수의 <span class="m">i</span>와 밑의 <span class="m">i</span>가 만나 <span class="m">i² = −1</span>이 되기 때문입니다. 엄밀히는 <span class="m">i = e<sup>i(π/2 + 2πk)</sup></span>로도 쓸 수 있어 <span class="m">e<sup>−π/2 − 2πk</sup></span>라는 값들이 모두 후보가 되고, 0.2079는 그중 대표값(주값)입니다.</p>
 </section>
 
@@ -855,6 +856,22 @@ function cstr(re,im,u){
   }
   document.querySelectorAll("[data-ssb]").forEach(b=>b.onclick=()=>{ mode=b.dataset.ssb; document.querySelectorAll("[data-ssb]").forEach(c=>c.setAttribute("aria-pressed",c===b?"true":"false")); });
   requestAnimationFrame(frame);
+})();
+
+/* ---------- 좁은 화면: 긴 공식은 줄을 나누고, 그래도 넘치면 글자를 조금 줄임 ---------- */
+(function(){
+  function fit(){
+    document.querySelectorAll('.eq').forEach(eq=>{
+      eq.style.fontSize='';
+      const cs=getComputedStyle(eq), avail=eq.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+      let widest=0; eq.querySelectorAll('.seg').forEach(sg=>{ widest=Math.max(widest,sg.getBoundingClientRect().width); });
+      if(!widest) widest=eq.scrollWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+      if(widest>avail){ const base=parseFloat(cs.fontSize); eq.style.fontSize=Math.max(base*0.8,base*avail/widest*0.98)+'px'; }
+    });
+  }
+  let t=null; window.addEventListener('resize',()=>{ clearTimeout(t); t=setTimeout(fit,120); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
+  window.addEventListener('load',fit); fit();
 })();
 
 /* ---------- 그림: 수직선에서 i 찾기 (3단원) ---------- */
