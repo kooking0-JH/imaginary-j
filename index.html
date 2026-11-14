@@ -191,7 +191,7 @@
 
 <div class="lab">
   <div class="lab-title">실험 ① 곱셈으로 돌리기</div>
-  <canvas id="cvRot" data-w="420" data-h="380"></canvas>
+  <canvas id="cvRot" data-w="640" data-h="340"></canvas>
   <div class="row">
     <button class="btn" type="button" id="rotI">× i 곱하기</button>
     <button class="btn" type="button" id="rotNeg">× (−1) 곱하기</button>
@@ -591,6 +591,27 @@ function text(x,s,px,py,col,size,align){
   x.fillStyle=col||C.ink; x.font=(size||13)+"px 'Noto Sans KR','Apple SD Gothic Neo',sans-serif";
   x.textAlign=align||"left"; x.textBaseline="middle"; x.fillText(s,px,py);
 }
+/* 좁은 화면(휴대폰)에서는 가로로 나란한 두 부분을 위아래로 쌓아 그립니다.
+   draw는 넓은 화면 좌표(폭 w)로 그대로 그리고, 왼쪽 [0,L]을 위에, 오른쪽 [L,w]를 아래에 놓습니다. */
+function stackable(P,L){
+  const c=P.c, W=P.w, H=P.h, d=window.devicePixelRatio||1, st={narrow:null,cw:W,ch:H};
+  function layout(){
+    const nar=(c.parentElement.clientWidth||W)<560;
+    if(nar===st.narrow) return false;
+    st.narrow=nar; st.cw=nar?Math.max(L,W-L):W; st.ch=nar?2*H:H;
+    c.width=st.cw*d; c.height=st.ch*d; return true;
+  }
+  function render(fn){
+    layout(); const x=P.x; x.setTransform(d,0,0,d,0,0);
+    if(!st.narrow){ fn(); return; }
+    x.clearRect(0,0,st.cw,st.ch);
+    x.save(); x.translate((st.cw-L)/2,0); x.beginPath(); x.rect(0,0,L,H); x.clip(); fn(); x.restore();
+    x.save(); x.translate(-L+(st.cw-(W-L))/2,H); x.beginPath(); x.rect(L,0,W-L,H); x.clip(); fn(); x.restore();
+    x.strokeStyle="#e6eaf0"; x.lineWidth=1; x.beginPath(); x.moveTo(10,H); x.lineTo(st.cw-10,H); x.stroke();
+  }
+  let t=null; window.addEventListener("resize",()=>{ clearTimeout(t); t=setTimeout(()=>{ if(layout()&&render.onresize) render.onresize(); },120); });
+  return render;
+}
 function rrect(x,X,Y,W,H,r){ x.beginPath(); x.moveTo(X+r,Y); x.arcTo(X+W,Y,X+W,Y+H,r); x.arcTo(X+W,Y+H,X,Y+H,r); x.arcTo(X,Y+H,X,Y,r); x.arcTo(X,Y,X+W,Y,r); x.closePath(); }
 function gamma(R,X,z0){ z0=z0||50; const nr=R-z0, dr=R+z0, dd=dr*dr+X*X; return [(nr*dr+X*X)/dd,(X*dr-nr*X)/dd]; }
 function smith(x,cx,cy,r,grid,edge){
@@ -612,28 +633,50 @@ function cstr(re,im,u){
 
 /* ---------- 실험 ① 회전 ---------- */
 (function(){
-  const P=prep("cvRot"), x=P.x, w=P.w, h=P.h, cx=w/2, cy=h/2, s=31;
-  let start=[3,4], z=[3,4], nI=0, anim=null, trail=[];
-  function draw(zz){
+  const P=prep("cvRot"), x=P.x, w=P.w, h=P.h, cx=185, cy=h/2, s=30, RN=stackable(P,370);
+  let start=[3,4], z=[3,4], nI=0, anim=null, trail=[], cur=[3,4];
+  const pw=["1","i","−1","−i"], deg=["0°","90°","180°","270°"];
+  function paint(){
+    const zz=cur;
     x.clearRect(0,0,w,h);
     x.strokeStyle=C.grid; x.lineWidth=1;
-    for(let k=-6;k<=6;k++){ x.beginPath(); x.moveTo(cx+k*s,0); x.lineTo(cx+k*s,h); x.stroke(); x.beginPath(); x.moveTo(0,cy+k*s); x.lineTo(w,cy+k*s); x.stroke(); }
+    for(let k=-5;k<=5;k++){ x.beginPath(); x.moveTo(cx+k*s,cy-5.3*s); x.lineTo(cx+k*s,cy+5.3*s); x.stroke(); x.beginPath(); x.moveTo(cx-5.3*s,cy+k*s); x.lineTo(cx+5.3*s,cy+k*s); x.stroke(); }
     x.strokeStyle=C.axis; x.lineWidth=1.5;
-    x.beginPath(); x.moveTo(0,cy); x.lineTo(w,cy); x.moveTo(cx,0); x.lineTo(cx,h); x.stroke();
-    text(x,"실수축",w-8,cy-12,C.axis,12,"right"); text(x,"허수축",cx+8,12,C.axis,12);
-    text(x,"1",cx+s,cy+12,C.sub,11,"center"); text(x,"i",cx+10,cy-s,C.sub,12);
-    text(x,"−1",cx-s,cy+12,C.sub,11,"center"); text(x,"−i",cx+10,cy+s,C.sub,12);
+    x.beginPath(); x.moveTo(cx-5.5*s,cy); x.lineTo(cx+5.5*s,cy); x.moveTo(cx,cy-5.5*s); x.lineTo(cx,cy+5.5*s); x.stroke();
+    text(x,"실수",cx+5.5*s,cy-10,C.axis,11,"right"); text(x,"허수",cx+6,cy-5.3*s+4,C.axis,11);
+    text(x,"1",cx+s,cy+11,C.sub,11,"center"); text(x,"i",cx+7,cy-s,C.sub,12);
+    text(x,"−1",cx-s,cy+11,C.sub,11,"center"); text(x,"−i",cx+7,cy+s,C.sub,12);
     const r=Math.hypot(zz[0],zz[1]);
     x.setLineDash([4,4]); x.strokeStyle="#b8c2d3"; x.lineWidth=1; x.beginPath(); x.arc(cx,cy,r*s,0,TAU); x.stroke(); x.setLineDash([]);
     trail.forEach((p,k)=>{ x.fillStyle="rgba(31,95,191,"+(0.18+0.12*k/Math.max(1,trail.length))+")"; x.beginPath(); x.arc(cx+p[0]*s,cy-p[1]*s,4,0,TAU); x.fill(); });
     arrow(x,cx,cy,cx+zz[0]*s,cy-zz[1]*s,C.blue,3);
     x.fillStyle=C.blue; x.beginPath(); x.arc(cx+zz[0]*s,cy-zz[1]*s,5,0,TAU); x.fill();
-    text(x,cstr(zz[0],zz[1]),cx+zz[0]*s+10,cy-zz[1]*s-14,C.blue,14);
+    if(!anim) text(x,cstr(zz[0],zz[1]),cx+zz[0]*s+(zz[0]>=0?8:-8),cy-zz[1]*s-14,C.blue,14,zz[0]>=0?"left":"right");
+    /* 오른쪽 패널 */
+    const k=((nI%4)+4)%4, X0=395;
+    text(x,"지금 값",X0,34,C.sub,12);
+    text(x,"z = "+cstr(z[0],z[1]),X0,60,C.blue,20);
+    text(x,"길이 |z| = "+num(Math.hypot(z[0],z[1])),X0,88,C.ink,13);
+    text(x,"i를 곱할 때마다 90°씩",X0,128,C.sub,12);
+    for(let m=0;m<4;m++){
+      const bx=X0+m*58, by=146, on=m===k;
+      x.fillStyle=on?C.blue:"#f1f4f9"; rrect(x,bx,by,48,40,8); x.fill();
+      x.strokeStyle=on?C.blue:"#c9d2e0"; x.lineWidth=1.5; rrect(x,bx,by,48,40,8); x.stroke();
+      text(x,pw[m],bx+24,by+20,on?"#fff":C.ink,16,"center");
+      text(x,deg[m],bx+24,by+54,on?C.blue:C.sub,11,"center");
+      if(m<3) text(x,"→",bx+53,by+20,C.sub,12,"center");
+    }
+    x.strokeStyle="#9aa6bb"; x.lineWidth=1.2; x.beginPath(); x.moveTo(X0+3*58+24,by2(146)); x.lineTo(X0+3*58+24,222); x.lineTo(X0+24,222); x.lineTo(X0+24,by2(146)); x.stroke();
+    text(x,"네 번이면 제자리",X0+111,232,C.sub,11,"center");
+    text(x,"곱한 i의 개수 n = "+nI,X0,270,C.ink,13);
+    text(x,"z = (시작값) × i"+sup(nI)+" = (시작값) × "+pw[k],X0,294,C.ink,13);
   }
+  function by2(){ return 206; }
+  function sup(n){ const m="⁰¹²³⁴⁵⁶⁷⁸⁹"; return String(n).split("").map(c=>m[+c]).join(""); }
+  const draw=()=>RN(paint); RN.onresize=draw;
   function out(){
-    const k=((nI%4)+4)%4, pw=["1","i","−1","−i"][k];
-    $("rotOut").textContent="현재 값 z = "+cstr(z[0],z[1])+"   (길이 "+num(Math.hypot(z[0],z[1]))+")\n"+
-      "곱한 i의 개수 = "+nI+"  →  z = (시작값) × i^"+nI+" = (시작값) × "+pw+"   [회전 "+(nI*90)+"°]";
+    const k=((nI%4)+4)%4;
+    $("rotOut").textContent="현재 값 z = "+cstr(z[0],z[1])+"   (길이 "+num(Math.hypot(z[0],z[1]))+")   회전 "+(nI*90)+"°  = i를 "+nI+"번 곱함 → (시작값) × "+pw[k];
   }
   function rotate(q){
     if(anim) return;
@@ -643,13 +686,13 @@ function cstr(re,im,u){
     anim=true;
     (function step(t){
       const u=Math.min(1,(t-t0)/dur), e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2, a=a0+da*e;
-      draw([r*Math.cos(a),r*Math.sin(a)]);
-      if(u<1) requestAnimationFrame(step); else { z=target; nI+=q; anim=null; draw(z); out(); }
+      cur=[r*Math.cos(a),r*Math.sin(a)]; draw();
+      if(u<1) requestAnimationFrame(step); else { z=target; cur=z.slice(); nI+=q; anim=null; draw(); out(); }
     })(t0);
   }
   $("rotI").onclick=()=>rotate(1);
   $("rotNeg").onclick=()=>rotate(2);
-  function reset(){ start=$("rotStart").value.split(",").map(Number); z=start.slice(); nI=0; trail=[]; draw(z); out(); }
+  function reset(){ start=$("rotStart").value.split(",").map(Number); z=start.slice(); cur=z.slice(); nI=0; trail=[]; draw(); out(); }
   $("rotReset").onclick=reset; $("rotStart").onchange=reset;
   reset();
 })();
@@ -683,7 +726,7 @@ function cstr(re,im,u){
 
 /* ---------- 실험 ③ L/C/R ---------- */
 (function(){
-  const P=prep("cvLC"), x=P.x, w=P.w, h=P.h, L0=200, R0=w-10, cy=88, A=66, cy2=245, A2=48;
+  const P=prep("cvLC"), x=P.x, w=P.w, h=P.h, L0=200, R0=w-10, cy=88, A=66, cy2=245, A2=48, RN=stackable(P,196);
   const cfg={L:{min:0.1,max:10,step:0.1,unit:"µH",lab:"인덕턴스 L"},C:{min:5,max:1000,step:5,unit:"pF",lab:"정전용량 C"},R:{min:5,max:200,step:1,unit:"Ω",lab:"저항 R"}};
   let part="L", t=0, last=performance.now();
   const vals={L:1,C:100,R:50};
@@ -739,6 +782,7 @@ function cstr(re,im,u){
   }
   function frame(tt){
     const dt=Math.min(0.05,(tt-last)/1000); last=tt; t+=dt*1.6;
+    RN(()=>{
     x.clearRect(0,0,w,h);
     const sh=part==="L"?-Math.PI/2:part==="C"?Math.PI/2:0;
     const ang=X=>(X-L0)/(R0-L0)*2*TAU - t;
@@ -755,6 +799,7 @@ function cstr(re,im,u){
     text(x,part==="R"?"항상 + : 열로 소비 (평균 > 0)":"+와 − 넓이가 같음 : 받았다 돌려줌 (평균 = 0)",R0-4,cy2-A2-8,part==="R"?"#2e9e5b":"#8e6bc4",12,"right");
     const a0=-t, v=Math.cos(a0), i=Math.cos(a0+sh); let p=v*i*2; if(part==="R") p/=2;
     drawPart(v,i,p);
+    });
     requestAnimationFrame(frame);
   }
   document.querySelectorAll("[data-part]").forEach(b=>b.onclick=()=>setPart(b.dataset.part));
@@ -764,8 +809,10 @@ function cstr(re,im,u){
 
 /* ---------- 실험 ④ 안테나 Z와 SWR ---------- */
 (function(){
-  const P=prep("cvZ"), x=P.x, w=P.w, h=P.h, ox=48, oy=h/2, s=0.6, sc=458, sr=165;
-  function draw(){
+  const P=prep("cvZ"), x=P.x, w=P.w, h=P.h, ox=48, oy=h/2, s=0.6, sc=458, sr=165, RN=stackable(P,270);
+  function draw(){ RN(paint); }
+  RN.onresize=draw;
+  function paint(){
     const R=+$("zR").value, X=+$("zX").value;
     x.clearRect(0,0,w,h);
     x.strokeStyle=C.grid; x.lineWidth=1;
@@ -803,7 +850,10 @@ function cstr(re,im,u){
   const P=prep("cvMeter"), x=P.x, w=P.w, h=P.h, f0=7.15;
   const Zf=f=>{ const d=(f-f0)/f0; return [62+700*d, 1300*d]; };
   let prevAbsX=null, lastMove=0;
-  function draw(){
+  const RN=stackable(P,392);
+  function draw(){ RN(paint); }
+  RN.onresize=draw;
+  function paint(){
     const f=+$("mF").value, z=Zf(f), R=z[0], X=z[1], g=gamma(R,X), gm=Math.hypot(g[0],g[1]), swr=(1+gm)/(1-gm);
     x.clearRect(0,0,w,h);
     // VNA
@@ -912,7 +962,10 @@ function cstr(re,im,u){
   }
   function arcMark(r,a0,a1,col,lab){ x.strokeStyle=col; x.lineWidth=2; x.beginPath(); x.arc(cx,cy,r,-a0,-a1,a1>a0); x.stroke(); if(lab){ const m=(a0+a1)/2; text(x,lab,cx+(r+14)*Math.cos(m),cy-(r+14)*Math.sin(m),col,13,"center"); } }
   function panel(lines){ let y=40; lines.forEach(l=>{ if(l==="") { y+=12; return; } text(x,l[0],440,y,l[1]||C.ink,l[2]||14); y+=24; }); }
-  function draw(){
+  const RN=stackable(P,425);
+  function draw(){ RN(paint); }
+  RN.onresize=draw;
+  function paint(){
     x.clearRect(0,0,w,h);
     x.strokeStyle="#e6eaf0"; x.beginPath(); x.moveTo(425,15); x.lineTo(425,h-15); x.stroke();
     if(step===1){
