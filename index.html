@@ -63,6 +63,24 @@
   figure.fig svg{display:block;width:100%;height:auto}
   figure.fig figcaption{font-size:.86rem;color:var(--sub);margin-top:.4em;text-align:center}
   [hidden]{display:none !important}
+  /* 함께 보기 */
+  .seealso{margin:2.6em 0 0;padding-top:1em;border-top:1px solid var(--line)}
+  .seealso h2{border-top:0;margin-top:0;padding-top:0}
+  .seealso ul{list-style:none;padding:0;margin:.6em 0;display:grid;gap:10px}
+  .seealso a.sa{position:relative;display:block;padding:12px 44px 12px 16px;border:1.5px solid #c9d2e0;border-radius:10px;background:#fff;color:var(--ink);text-decoration:none;box-shadow:0 3px 0 #d5dce8;transition:background .15s, transform .08s}
+  .seealso a.sa:hover{background:#f3f7fe;border-color:#1f5fbf}
+  .seealso a.sa:active{transform:translateY(2px);box-shadow:0 1px 0 #d5dce8}
+  .seealso a.sa b{display:block;font-size:1rem;color:#123f85}
+  .seealso a.sa span{display:block;font-size:.88rem;color:var(--sub);margin-top:2px}
+  .seealso a.sa i{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-style:normal;font-size:1.1rem;color:#1f5fbf}
+  .blogview{margin-top:1em;font-size:.9rem}
+  .embedded .blogview{display:none}
+  /* 페이지 메뉴 (허수 j · 오일러 공식) */
+  nav.pages{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:4px}
+  nav.pages a.pg{display:inline-flex;align-items:center;padding:8px 18px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;color:#141b26;background:#fff;box-shadow:inset 0 0 0 1.5px #5f6b7d, 0 2px 0 #b9c3d2;transition:background .15s, transform .08s}
+  nav.pages a.pg:hover{background:#eef1f5}
+  nav.pages a.pg:active{transform:translateY(2px)}
+  nav.pages a.pg[aria-current="page"]{color:#fff;background:#1d2d44;box-shadow:0 2px 0 #b9c3d2;pointer-events:none}
   /* 머리 (교과서 속 공식과 같은 구성) */
   .hero{padding:40px 0 18px;display:grid;gap:16px;text-align:center}
   .eyebrow{font-size:13px;letter-spacing:.08em;color:var(--sub)}
@@ -118,6 +136,7 @@
   <p class="lede">회로도, 안테나 분석기, NanoVNA, SDR 화면 어디에나 j가 나옵니다. 허수가 어떻게 태어났고 무엇을 뜻하며 무선의 어느 자리에서 일하는지를 차례로 풀어, 그 j를 읽을 수 있게 합니다.</p>
   <ul class="qs"><li>제곱해서 −1이 되는 수는 어디에 있을까?</li><li>분석기의 X에는 왜 +와 −가 있을까?</li><li>SDR은 중심 주파수의 위아래를 어떻게 구별할까?</li></ul>
   <p class="lede">13개 단원에 그림과 실험 상자 7개가 함께 나옵니다. 듣기를 켜면 실험 상자도 대본에 맞춰 움직입니다.</p>
+  <nav class="pages" aria-label="페이지 목차"><a class="pg" href="index.html" aria-current="page">허수 j</a><a class="pg" href="euler.html">오일러 공식</a></nav>
 </header>
 
 <nav class="toc">
@@ -249,6 +268,7 @@
 <p>그림 ④는 이 결론을 거꾸로 확인합니다. 아주 작은 회전 <span class="m">1 + iθ/n</span>을 <span class="m">n</span>번 곱하면, <span class="m">n</span>이 커질수록 꺾은선이 원호에 붙고 끝점이 <span class="m">cos θ + i sin θ</span>에 다가갑니다. 작은 변화를 끝없이 곱해 쌓는 것이 바로 지수함수 <span class="m">e<sup>iθ</sup></span>입니다.</p>
 <p>지수에 <span class="m">i</span>가 들어가면 크기를 키우는 대신 원을 따라 <span class="m">θ</span>만큼 돌립니다. <span class="m">θ = π</span>(반 바퀴)를 넣으면 <span class="m">e<sup>iπ</sup> = −1</span>, 곧 <span class="m">e<sup>iπ</sup> + 1 = 0</span>입니다. <span class="greek">π: 파이</span></p>
 <p>무선에 필요한 핵심은 이 공식이 <b>회전과 파동을 한 줄로 묶는다</b>는 점입니다. 다음 단원부터는 이 한 줄로 교류, 리액턴스, 안테나, 수신기를 차례로 읽습니다.</p>
+<p class="note">이 공식을 나선 그래프, 급수의 화살표 길, 밑 비교로 다시 보는 해설은 위쪽 메뉴의 <a href="euler.html">오일러 공식</a> 페이지에 있습니다.</p>
 </section>
 
 <!-- 6 -->
@@ -371,7 +391,7 @@
 <p>가는 도선으로 만든 반파장 다이폴의 자유공간 이론값은 <span class="m">73 + j42.5 Ω</span>입니다. 정확히 반파장 길이에서는 허수부가 남기 때문에, 실제로는 반파장보다 몇 % 짧게 잘라 <span class="m">X</span>를 0으로 맞춥니다.</p>
 <p><b>SWR도 복소수 계산이다.</b> 50 Ω 급전선 쪽에서 본 반사계수 <span class="m">Γ</span>는 복소수 나눗셈입니다. <span class="greek">Γ: 감마</span></p>
 <div class="eq"><span class="seg">Γ = (Z − 50) / (Z + 50),</span> <span class="seg">SWR = (1 + |Γ|) / (1 − |Γ|)</span></div>
-<p>실수부가 정확히 50 Ω이어도 허수부가 있으면 반사가 생깁니다. <span class="m">Z = 50 + j50</span>이면 <span class="m">|Γ| ≈ 0.447</span>, SWR은 약 2.6입니다. 안테나 튜너는 두 가지 일을 함께 합니다. 반대 부호의 리액턴스로 허수부를 지우고, 코일·콘덴서 조합으로 저항 성분도 50 Ω으로 바꿉니다. 리액턴스 하나만 더해서는 허수부만 지워질 뿐, 실수부가 50 Ω이 아니면 SWR은 1이 되지 않습니다.</p>
+<p>실수부가 정확히 50 Ω이어도 허수부가 있으면 반사가 생깁니다. <span class="m">Z = 50 + j50</span>이면 <span class="m">|Γ| ≈ 0.447</span>, SWR은 약 2.6입니다. 안테나 튜너는 두 가지 일을 함께 합니다. 반대 부호의 리액턴스로 허수부를 지우고, 코일·콘덴서 조합으로 저항 성분도 50 Ω으로 바꿉니다. 리액턴스 하나만 더해서는 허수부만 지워질 뿐, 실수부가 50 Ω이 아니면 SWR은 1이 되지 않습니다. 임피던스와 SWR을 수식으로 더 따라가는 해설은 <a href="https://6k5ehn.tistory.com/entry/ham-formula%EA%B3%B5%EC%A7%84-%EC%9E%84%ED%94%BC%EB%8D%98%EC%8A%A4-SWR" target="_top" rel="noopener">「ham-formula: 공진, 임피던스, SWR」</a>에 있습니다.</p>
 <div class="lab">
   <div class="lab-title">실험 ④ 급전점 임피던스를 움직여 SWR 보기</div>
   <canvas id="cvZ" data-w="640" data-h="400"></canvas>
@@ -386,7 +406,7 @@
   <div class="status" id="zOut"></div>
 </div>
 <div class="side"><span class="tag">곁가지 · 동축 케이블과 위상</span><br>
-전파가 급전선을 따라 거리 <span class="m">ℓ</span>만큼 가면 위상이 <span class="m">e<sup>−jβℓ</sup></span>만큼 늦어집니다(<span class="m">β = 2π/λ</span>, 케이블 안의 파장 기준). 무전기 쪽에서 재는 반사계수는 안테나까지 갔다가 되돌아온 왕복분이 쌓이므로 <span class="m">Γ<sub>무전기</sub> = Γ<sub>안테나</sub> · e<sup>−j2βℓ</sup></span>, 곧 <b>왕복 거리 2ℓ만큼</b> 돕니다. 그래서 같은 안테나라도 케이블 길이에 따라 무전기 쪽 <span class="m">Z</span>는 달라 보입니다. 손실이 없다면 <span class="m">|Γ|</span>는 회전해도 길이가 그대로이므로 SWR은 바뀌지 않습니다. 케이블이 전기적 반파장(<span class="m">2βℓ = 2π</span>)이면 한 바퀴를 돌아 제자리이므로, 반파장 배수 케이블 끝에서는 안테나 급전점 임피던스가 그대로 보입니다. <span class="greek">β: 베타, λ: 람다</span></div>
+전파가 급전선을 따라 거리 <span class="m">ℓ</span>만큼 가면 위상이 <span class="m">e<sup>−jβℓ</sup></span>만큼 늦어집니다(<span class="m">β = 2π/λ</span>, 케이블 안의 파장 기준). 무전기 쪽에서 재는 반사계수는 안테나까지 갔다가 되돌아온 왕복분이 쌓이므로 <span class="m">Γ<sub>무전기</sub> = Γ<sub>안테나</sub> · e<sup>−j2βℓ</sup></span>, 곧 <b>왕복 거리 2ℓ만큼</b> 돕니다. 그래서 같은 안테나라도 케이블 길이에 따라 무전기 쪽 <span class="m">Z</span>는 달라 보입니다. 손실이 없다면 <span class="m">|Γ|</span>는 회전해도 길이가 그대로이므로 SWR은 바뀌지 않습니다. 케이블이 전기적 반파장(<span class="m">2βℓ = 2π</span>)이면 한 바퀴를 돌아 제자리이므로, 반파장 배수 케이블 끝에서는 안테나 급전점 임피던스가 그대로 보입니다. <span class="greek">β: 베타, λ: 람다</span> 동축 케이블의 기준이 왜 50 Ω인지는 <a href="https://6k5ehn.tistory.com/entry/%EB%8F%99%EC%B6%95-%EC%BC%80%EC%9D%B4%EB%B8%94%EC%9D%80-%EC%99%9C-50%CE%A9%EC%9D%BC%EA%B9%8C" target="_top" rel="noopener">「동축 케이블은 왜 50Ω일까」</a>에서 다룹니다.</div>
 </section>
 
 <!-- 9 -->
@@ -558,6 +578,17 @@
   <tr><td><span class="m">e<sup>−iEt/ħ</sup></span></td><td>원자가 내는 전파: 21 cm 선, 세슘 시계</td></tr>
 </table>
 <p>"상상의 수"라는 이름과 달리, 허수는 무선에서 가장 실용적인 기호 중 하나입니다. 실수만으로는 크기밖에 말할 수 없지만 <span class="m">j</span>를 더하면 <b>크기와 위상</b>을 한 번에 다룰 수 있습니다. 교류의 위상차, 리액턴스, 공진, 반사계수, SWR, I/Q 신호가 모두 이 두 가지 정보의 계산입니다. 분석기 화면에서 <span class="m">j</span>를 만나면 "90° 돌아간 성분, 저장했다 돌려주는 에너지"를 떠올리시면 됩니다.</p>
+</section>
+
+<section class="seealso" aria-label="함께 보기">
+<h2>함께 보기</h2>
+<ul>
+  <li><a class="sa" href="https://6k5ehn.tistory.com/entry/ham-formula%EA%B3%B5%EC%A7%84-%EC%9E%84%ED%94%BC%EB%8D%98%EC%8A%A4-SWR" target="_top" rel="noopener"><b>ham-formula: 공진, 임피던스, SWR</b><span>공진 공식 f₀ = 1/(2π√LC), 임피던스와 SWR, 스미스 차트를 수식으로 따라가는 연작 (7·8·9단원)</span><i aria-hidden="true">↗</i></a></li>
+  <li><a class="sa" href="https://6k5ehn.tistory.com/entry/%EB%8F%99%EC%B6%95-%EC%BC%80%EC%9D%B4%EB%B8%94%EC%9D%80-%EC%99%9C-50%CE%A9%EC%9D%BC%EA%B9%8C" target="_top" rel="noopener"><b>동축 케이블은 왜 50Ω일까</b><span>SWR 계산과 스미스 차트의 기준값 50 Ω이 정해진 이유 (8단원)</span><i aria-hidden="true">↗</i></a></li>
+  <li><a class="sa" href="https://6k5ehn.tistory.com/entry/%EA%B5%90%EA%B3%BC%EC%84%9C-%EC%86%8D-%EB%AC%B4%EC%84%A0%EA%B3%B5%EC%8B%9D" target="_top" rel="noopener"><b>교과서 속 무선공식</b><span>복소수, 삼각비, 피타고라스 정리 등 학교 수학 단원과 무선 공식 연결 (3·4·8단원)</span><i aria-hidden="true">↗</i></a></li>
+  <li><a class="sa" href="https://6k5ehn.tistory.com/entry/%EB%A7%A5%EC%8A%A4%EC%9B%B0-%EB%B0%A9%EC%A0%95%EC%8B%9D" target="_top" rel="noopener"><b>맥스웰 방정식</b><span>전기장과 자기장이 서로를 만들며 전파가 되는 과정 (6·11단원)</span><i aria-hidden="true">↗</i></a></li>
+</ul>
+<p class="blogview"><a href="https://6k5ehn.tistory.com/entry/%EC%95%84%EB%A7%88%EC%B6%94%EC%96%B4-%EB%AC%B4%EC%84%A0%EC%82%AC%EB%A5%BC-%EC%9C%84%ED%95%9C-%ED%97%88%EC%88%98-j" target="_top" rel="noopener">블로그 글에서 보기 (6K5EHN 블로그) ↗</a></p>
 </section>
 
 <footer>

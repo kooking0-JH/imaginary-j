@@ -1,0 +1,31 @@
+<!-- 티스토리 글: HTML 모드로 바꾼 뒤 붙여 넣기 -->
+<iframe class="ham-embed" src="https://kooking0-jh.github.io/imaginary-j/" title="아마추어 무선사를 위한 허수 j" style="display:block;width:100%;height:900px;border:0;overflow:hidden" scrolling="no" loading="lazy"></iframe>
+<script>
+(function(){
+  var ORIGIN = 'https://kooking0-jh.github.io';
+  var frames = [].slice.call(document.querySelectorAll('iframe.ham-embed'));
+  function frameOf(win){ for (var i = 0; i < frames.length; i++) if (frames[i].contentWindow === win) return frames[i]; return null; }
+  function absTop(f){ return f.getBoundingClientRect().top + window.pageYOffset; }
+  function sendView(f){
+    var r = f.getBoundingClientRect();
+    try { f.contentWindow.postMessage({type: 'antenna-types:viewport', top: -r.top, height: window.innerHeight}, ORIGIN); } catch(e){}
+  }
+  function ping(){ frames.forEach(function(f){ try { f.contentWindow.postMessage({type: 'antenna-types:ping'}, ORIGIN); } catch(e){} sendView(f); }); }
+  window.addEventListener('message', function(e){
+    if (e.origin !== ORIGIN || !e.data || typeof e.data !== 'object') return;
+    var f = frameOf(e.source); if (!f) return;
+    var d = e.data;
+    if (d.type === 'antenna-types:height' && d.height > 0){ f.style.height = Math.ceil(d.height) + 'px'; sendView(f); }
+    else if (d.type === 'antenna-types:scrollto'){ window.scrollTo({top: absTop(f) + d.y - window.innerHeight / 2, behavior: d.smooth ? 'smooth' : 'auto'}); }
+    else if (d.type === 'antenna-types:scroll'){ window.scrollTo({top: absTop(f) + d.top - 70, behavior: 'smooth'}); }
+    else if (d.type === 'antenna-types:needview'){ sendView(f); }
+  });
+  var tick = false;
+  function onView(){ if (tick) return; tick = true; requestAnimationFrame(function(){ tick = false; frames.forEach(sendView); }); }
+  window.addEventListener('scroll', onView, {passive: true});
+  window.addEventListener('resize', onView);
+  /* 메뉴로 다른 페이지로 넘어가면 높이를 줄였다가 새 페이지 높이로 다시 맞춤 */
+  frames.forEach(function(f){ f.addEventListener('load', function(){ f.style.height = '900px'; ping(); }); });
+  [300, 1000, 2500, 5000].forEach(function(t){ setTimeout(ping, t); });
+})();
+</script>

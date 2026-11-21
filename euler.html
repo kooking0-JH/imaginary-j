@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>그래프로 보는 오일러 공식</title>
+<style>
+  :root{
+    --ink:#1d2330; --sub:#4a5468; --line:#dfe4ec; --soft:#f5f7fa;
+    --blue:#1f5fbf; --blue-d:#123f85; --orange:#d9650b; --green:#1f8a4c; --red:#c0392b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#fff;color:var(--ink);font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;line-height:1.75;font-size:16.5px}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 20px 60px}
+  h1{font-size:1.85rem;line-height:1.35;margin:.2em 0 .3em}
+  .lead{color:var(--sub);margin:0 0 1.2em}
+  h2{font-size:1.32rem;margin:2.4em 0 .5em;padding-top:.8em;border-top:1px solid var(--line);display:flex;gap:.5em;align-items:baseline;flex-wrap:wrap}
+  h2 .no{color:var(--blue);font-weight:800}
+  h3{font-size:1.06rem;margin:1.6em 0 .3em}
+  p{margin:.6em 0}
+  .toc{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:12px 18px;font-size:.95rem}
+  .toc ol{margin:.3em 0;padding-left:1.3em;columns:2;column-gap:2em}
+  .toc a{color:var(--blue);text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  .eq{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:1.18rem;text-align:center;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:.8em 0;overflow-x:auto;white-space:normal;line-height:1.7}
+  .eq .seg{display:inline-block;white-space:nowrap;margin:0 .18em}
+  .eq small{font-family:inherit;font-size:.8rem;color:var(--sub)}
+  .m{font-family:"Cambria Math","STIX Two Math","Times New Roman",serif;font-size:1.06em;white-space:nowrap}
+  .steps{counter-reset:st;list-style:none;padding:0}
+  .steps>li{counter-increment:st;position:relative;padding:.3em 0 .3em 2.3em}
+  .steps>li::before{content:counter(st);position:absolute;left:0;top:.45em;width:1.6em;height:1.6em;border-radius:50%;background:#e7eefb;color:var(--blue);font-weight:800;font-size:.85rem;display:flex;align-items:center;justify-content:center}
+  .note{border-left:3px solid var(--blue);background:#f3f7fe;padding:10px 14px;margin:1em 0;border-radius:0 6px 6px 0;font-size:.95rem}
+  .side{border:1px dashed #9aa6bb;background:#fbfcfd;padding:12px 16px;margin:1em 0;border-radius:8px;font-size:.95rem}
+  .side .tag{display:inline-block;font-size:.78rem;color:#5b667a;letter-spacing:.05em;margin-bottom:.2em}
+  table{border-collapse:collapse;width:100%;font-size:.93rem;margin:.8em 0}
+  th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+  th{background:var(--soft)}
+  .greek{font-size:.85rem;color:var(--sub)}
+  /* 실험 상자 */
+  .lab{border:1px solid #cdd6e4;border-radius:10px;padding:14px;margin:1.2em 0;background:#fff;box-shadow:0 1px 3px rgba(20,40,80,.06)}
+  .lab-title{font-weight:800;font-size:.95rem;color:var(--blue-d);margin-bottom:.5em}
+  canvas{display:block;width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:6px}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:.6em 0}
+  .row label{font-size:.92rem;color:var(--sub)}
+  input[type=range]{flex:1;min-width:160px;accent-color:var(--blue)}
+  select{font:inherit;font-size:.92rem;padding:5px 8px;border:1px solid #b9c3d3;border-radius:6px;background:#fff}
+  /* 누를 수 있는 버튼: 채워진 색 + 아래 그림자 + 손가락 커서 */
+  .btn{font:inherit;font-size:.92rem;font-weight:700;cursor:pointer;border-radius:8px;padding:7px 14px;border:2px solid var(--blue);background:var(--blue);color:#fff;box-shadow:0 3px 0 var(--blue-d);transition:transform .05s, box-shadow .05s, background .15s;user-select:none}
+  .btn:hover{background:#2a6fd6}
+  .btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--blue-d)}
+  .btn:focus-visible{outline:3px solid #f2b705;outline-offset:2px}
+  .btn.alt{background:#fff;color:var(--blue)}
+  .btn.alt:hover{background:#eef4fd}
+  .btn.seg[aria-pressed="false"]{background:#fff;color:var(--blue)}
+  .btn.seg[aria-pressed="false"]:hover{background:#eef4fd}
+  /* 상태 표시: 버튼과 구별되도록 평평한 회색 칸, 그림자·테두리 버튼 없음 */
+  .status{font-family:"D2Coding","Consolas","Menlo",monospace;font-size:.9rem;background:#f1f3f6;border-left:3px solid #8b96a8;padding:7px 11px;margin:.5em 0;color:#2b3445;border-radius:0 4px 4px 0;white-space:pre-wrap}
+  .status::before{content:"표시 ▸ ";color:#8b96a8;font-size:.78rem}
+  .legend{font-size:.85rem;color:var(--sub)}
+  .legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin:0 4px 0 10px;border-radius:2px}
+  section.item{scroll-margin-top:24px}
+  figure.fig{margin:1.2em 0;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff}
+  figure.fig svg{display:block;width:100%;height:auto}
+  figure.fig figcaption{font-size:.86rem;color:var(--sub);margin-top:.4em;text-align:center}
+  [hidden]{display:none !important}
+  /* 함께 보기 */
+  .seealso{margin:2.6em 0 0;padding-top:1em;border-top:1px solid var(--line)}
+  .seealso h2{border-top:0;margin-top:0;padding-top:0}
+  .seealso ul{list-style:none;padding:0;margin:.6em 0;display:grid;gap:10px}
+  .seealso a.sa{position:relative;display:block;padding:12px 44px 12px 16px;border:1.5px solid #c9d2e0;border-radius:10px;background:#fff;color:var(--ink);text-decoration:none;box-shadow:0 3px 0 #d5dce8;transition:background .15s, transform .08s}
+  .seealso a.sa:hover{background:#f3f7fe;border-color:#1f5fbf}
+  .seealso a.sa:active{transform:translateY(2px);box-shadow:0 1px 0 #d5dce8}
+  .seealso a.sa b{display:block;font-size:1rem;color:#123f85}
+  .seealso a.sa span{display:block;font-size:.88rem;color:var(--sub);margin-top:2px}
+  .seealso a.sa i{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-style:normal;font-size:1.1rem;color:#1f5fbf}
+  .blogview{margin-top:1em;font-size:.9rem}
+  .embedded .blogview{display:none}
+  /* 페이지 메뉴 (허수 j · 오일러 공식) */
+  nav.pages{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:4px}
+  nav.pages a.pg{display:inline-flex;align-items:center;padding:8px 18px;border-radius:999px;font-weight:700;font-size:15px;text-decoration:none;color:#141b26;background:#fff;box-shadow:inset 0 0 0 1.5px #5f6b7d, 0 2px 0 #b9c3d2;transition:background .15s, transform .08s}
+  nav.pages a.pg:hover{background:#eef1f5}
+  nav.pages a.pg:active{transform:translateY(2px)}
+  nav.pages a.pg[aria-current="page"]{color:#fff;background:#1d2d44;box-shadow:0 2px 0 #b9c3d2;pointer-events:none}
+  /* 머리 (교과서 속 공식과 같은 구성) */
+  .hero{padding:40px 0 18px;display:grid;gap:16px;text-align:center}
+  .eyebrow{font-size:13px;letter-spacing:.08em;color:var(--sub)}
+  .hero h1{font-size:clamp(26px,5vw,34px);margin:0}
+  .hero .lede{color:#2f3a4a;max-width:58ch;margin:0 auto}
+  .qs{list-style:none;padding:0;margin:0;display:grid;gap:8px;font-weight:700}
+  .qs li::before{content:"Q. ";color:var(--sub);font-weight:400}
+  /* 듣기 (교과서 속 공식과 같은 모양) */
+  .listen{display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center}
+  .narr-all,.narr-bar button,.narr-sec{font:inherit;font-weight:700;line-height:1.2;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s, transform .08s}
+  .narr-all{font-size:16px;padding:10px 20px;color:#fff;background:#1d2d44;border:0;box-shadow:0 3px 0 #b9c3d2}
+  .narr-all:hover{background:#2b4163}
+  .narr-all:active,.narr-bar button:active,.narr-sec:active{transform:translateY(2px)}
+  .narr-note{color:var(--sub);font-size:13px;text-align:center}
+  .narr-sec{font-size:13px;padding:6px 12px;margin:.5em 0 .2em;color:#141b26;background:#fff;border:0;box-shadow:inset 0 0 0 1.5px #5f6b7d, 0 2px 0 #b9c3d2}
+  .narr-sec:hover{background:#eef1f5}
+  .narr-on{outline:2px solid #5e35b1;outline-offset:6px;border-radius:6px;background:rgba(94,53,177,.06)}
+  .narr-bar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:center;padding:10px max(16px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));background:#f5f7fa;border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(20,27,38,.12)}
+  .narr-bar .nb-info{display:flex;gap:10px;align-items:baseline;font-size:13px;color:#2f3a4a;max-width:46ch;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .nb-pos{color:var(--sub);font-variant-numeric:tabular-nums}
+  .nb-ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .nb-ctrl button{min-width:40px;justify-content:center;padding:7px 10px;font-size:14px;color:#fff;background:#1d2d44;border:0;box-shadow:0 2px 0 #b9c3d2}
+  .nb-ctrl button.alt{color:#141b26;background:#fff;box-shadow:inset 0 0 0 1.5px #5f6b7d, 0 2px 0 #b9c3d2}
+  .nb-ctrl button.alt:hover{background:#eef1f5}
+  .nb-rate{display:flex;gap:6px;align-items:center;color:var(--sub);font-size:13px}
+  .nb-rate select{background:#fff;color:#141b26;border:1px solid var(--line);border-radius:4px;padding:3px 6px;font:inherit}
+  .nb-msg{flex-basis:100%;text-align:center;font-size:13px;color:#c2410c}
+  body.narr-open{padding-bottom:120px}
+  .narr-unsup{max-width:34em;display:grid;gap:10px;margin-top:4px;padding:12px 14px;font-size:14px;line-height:1.6;color:#2f3a4a;background:#f5f7fa;border:1px solid var(--line);border-radius:6px;text-align:center}
+  .unsup-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+  .btnlink{display:inline-flex;align-items:center;padding:8px 14px;border-radius:6px;background:#1d2d44;color:#fff;font-weight:600;font-size:14px;text-decoration:none;box-shadow:0 2px 0 #b9c3d2}
+  @media (max-width:560px){
+    .narr-bar{gap:4px 8px;padding-top:6px;padding-bottom:calc(6px + env(safe-area-inset-bottom, 0px))}
+    .narr-bar .nb-info{flex-basis:100%;justify-content:center;font-size:12px;line-height:1.2}
+    .nb-ctrl{gap:6px;flex-wrap:nowrap}
+    .nb-ctrl button{min-width:36px;padding:6px 8px}
+    .nb-rate{font-size:0;gap:0}
+    .nb-rate select{font-size:13px;padding:2px 4px}
+    body.narr-open{padding-bottom:84px}
+  }
+  .narr-bar.emb{position:absolute;bottom:auto;top:0}
+  footer{margin-top:3em;padding-top:1em;border-top:1px solid var(--line);font-size:.88rem;color:var(--sub)}
+  footer a{color:var(--blue)}
+  @media (max-width:600px){ .toc ol{columns:1} body{font-size:16px} .eq{font-size:1.05rem} }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">허수 이야기 · 무선 공식</div>
+  <h1>그래프로 보는 오일러 공식</h1>
+  <p class="lede">e<sup>iθ</sup> = cos θ + i sin θ. 식 하나가 원과 sin 곡선, cos 곡선을 한꺼번에 그립니다. 나선 그래프에서 출발해 무한급수의 화살표 길, 밑이 e여야 하는 이유, 무선 신호의 합성까지 그림으로 확인합니다.</p>
+  <ul class="qs"><li>e<sup>iθ</sup>는 왜 커지지 않고 원을 돌까?</li><li>원 하나에서 어떻게 sin과 cos이 나올까?</li><li>왜 하필 밑이 e일까?</li></ul>
+  <p class="lede">8개 단원에 그림 7개가 함께 나옵니다. 듣기를 켜면 그림도 대본에 맞춰 움직입니다. 이 글은 엄밀한 증명이 아니라 그림으로 보는 해설이며, 복소수 지수의 정의와 증명은 지수함수의 급수 정의를 따릅니다.</p>
+  <nav class="pages" aria-label="페이지 목차"><a class="pg" href="index.html">허수 j</a><a class="pg" href="euler.html" aria-current="page">오일러 공식</a></nav>
+</header>
+
+<nav class="toc">
+  <b>차례</b>
+  <ol>
+    <li><a href="#e1">식 하나가 그리는 나선</a></li>
+    <li><a href="#e2">지수가 커지는데 왜 원을 돌까</a></li>
+    <li><a href="#e3">보는 방향에 따라 원, sin, cos</a></li>
+    <li><a href="#e4">왜 하필 cos과 sin일까</a></li>
+    <li><a href="#e5">무한급수를 화살표 길로 확인하기</a></li>
+    <li><a href="#e6">왜 하필 밑이 e일까</a></li>
+    <li><a href="#e7">무선에서: 도는 화살표로 신호 더하기</a></li>
+    <li><a href="#e8">정리</a></li>
+  </ol>
+</nav>
+
+<!-- 1 -->
+<section class="item" id="e1">
+<h2><span class="no">1</span> 식 하나가 그리는 나선</h2>
+<p>아래 그림의 검은 곡선은 식 하나, <span class="m">e<sup>iθ</sup></span>가 그린 것입니다. θ가 커지는 동안 점은 반지름 1인 원을 돌면서 θ축을 따라 앞으로 나아가고, 그 자취가 나선이 됩니다.</p>
+<div class="lab">
+  <div class="lab-title">그림 ① 오일러 공식이 그리는 나선</div>
+  <canvas id="cvHx" data-w="640" data-h="360"></canvas>
+  <div class="row">
+    <button class="btn seg" type="button" data-hv="obl" aria-pressed="true">비스듬히</button>
+    <button class="btn seg" type="button" data-hv="front" aria-pressed="false">앞에서 → 원</button>
+    <button class="btn seg" type="button" data-hv="side" aria-pressed="false">옆에서 → sin</button>
+    <button class="btn seg" type="button" data-hv="bottom" aria-pressed="false">밑에서 → cos</button>
+    <button class="btn alt" type="button" id="hxDraw">▶ 다시 그리기</button>
+  </div>
+  <div class="legend">복소평면에 θ축을 더한 3차원 그림입니다. 복소평면 위에서 점 e<sup>iθ</sup>는 단위원만 돕니다.</div>
+  <div class="legend"><i style="background:#1d2330"></i>나선 e<sup>iθ</sup> <i style="background:#d9650b"></i>허수부 sin θ (뒷벽의 그림자) <i style="background:#2e9e5b"></i>실수부 cos θ (바닥의 그림자)</div>
+  <div class="status" id="hxOut"></div>
+</div>
+<p>그림을 끌어 돌리거나 단추를 누르면 보는 방향이 바뀝니다. 앞에서 보면 θ축이 점으로 겹쳐 원만 남습니다. 옆에서 보면 세로축이 허수축이라 허수부 sin θ 곡선이, 밑에서 보면 세로축이 실수축이라 실수부 cos θ 곡선이 보입니다. 원을 그리며 나아가는 움직임 하나가 보는 방향에 따라 원도 되고 삼각함수 그래프도 됩니다. 이 글은 그 이유를 차례로 풀어 갑니다.</p>
+</section>
+
+<!-- 2 -->
+<section class="item" id="e2">
+<h2><span class="no">2</span> 지수가 커지는데 왜 원을 돌까</h2>
+<p>보통의 지수함수는 밑이 1보다 크면 지수가 커질수록 값도 커집니다. <span class="m">2<sup>x</sup></span>도, <span class="m">e<sup>x</sup></span>도 x가 커지면 끝없이 커집니다. 그런데 <span class="m">e<sup>iθ</sup></span>는 θ를 아무리 키워도 크기가 1에서 변하지 않고 원 위를 돕니다.</p>
+<div class="lab">
+  <div class="lab-title">그림 ② 실수 지수는 키우고, 허수 지수는 돌린다</div>
+  <canvas id="cvGrow" data-w="640" data-h="320"></canvas>
+  <div class="row"><label for="grT">θ (라디안)</label><input type="range" id="grT" min="0" max="6.28" step="0.01" value="1"></div>
+  <div class="legend"><i style="background:#1f5fbf"></i>현재 위치 <i style="background:#d9650b"></i>변하는 방향(속도)</div>
+  <div class="status" id="grOut"></div>
+</div>
+<p>차이는 변하는 방향에 있습니다. <span class="m">e<sup>x</sup></span>를 미분하면 자기 자신이 나옵니다. 지금 위치와 같은 방향으로 커지므로 점점 더 빨리 커집니다. 실수 지수의 미분 규칙 (e<sup>ax</sup>)′ = a·e<sup>ax</sup>가 허수 a = i에서도 성립한다고 보면(5단원의 급수 정의로 확인됩니다), <span class="m">e<sup>iθ</sup></span>를 θ로 미분해 <span class="m">i·e<sup>iθ</sup></span>를 얻습니다. i를 곱하면 방향이 90° 돌아가므로, 변하는 방향이 지금 위치와 언제나 직각입니다. 원점에서 바깥으로 밀어내는 성분이 없으니 크기는 그대로이고, 방향만 계속 돌아갑니다. 이것이 원운동입니다.</p>
+<div class="eq"><span class="seg">d/dθ e<sup>iθ</sup> = i · e<sup>iθ</sup></span> <span class="seg"><small>(속도 = 위치를 90° 돌린 것)</small></span></div>
+<p>속도의 크기도 늘 1입니다. 그래서 θ는 반지름 1인 원을 따라 <b>걸은 길이</b>, 곧 라디안으로 잰 각도가 됩니다. θ = π이면 반 바퀴를 걸어 −1에 도착하고, θ = 2π이면 한 바퀴를 돌아 1로 돌아옵니다. θ가 더 커져도 점은 같은 원을 계속 돕니다.</p>
+</section>
+
+<!-- 3 -->
+<section class="item" id="e3">
+<h2><span class="no">3</span> 보는 방향에 따라 원, sin, cos</h2>
+<p>원만 보아서는 점이 몇 바퀴째인지 알 수 없습니다. 그래서 θ를 위한 축을 하나 세우면 원이 θ축 방향으로 늘어나 그림 ①의 나선이 됩니다. 나선을 옆에서 보는 것은 시간축을 옆으로 펼쳐 놓고 세로 그림자만 기록하는 것과 같습니다.</p>
+<div class="lab">
+  <div class="lab-title">그림 ③ 도는 점의 그림자를 펼치면</div>
+  <canvas id="cvProj" data-w="640" data-h="300"></canvas>
+  <div class="row">
+    <button class="btn" type="button" id="pjPlay" aria-pressed="true">⏸ 멈추기</button>
+    <button class="btn seg" type="button" data-pj="sin" aria-pressed="false">세로 그림자(sin)</button>
+    <button class="btn seg" type="button" data-pj="cos" aria-pressed="false">가로 그림자(cos)</button>
+    <button class="btn seg" type="button" data-pj="both" aria-pressed="true">둘 다</button>
+  </div>
+  <div class="legend"><i style="background:#d9650b"></i>세로 그림자 = 허수부 sin θ <i style="background:#2e9e5b"></i>가로 그림자 = 실수부 cos θ</div>
+  <div class="status" id="pjOut"></div>
+</div>
+<p>세로 그림자를 펼치면 sin θ, 가로 그림자를 펼치면 cos θ 곡선이 됩니다. 두 곡선은 모양이 같고 위치만 90°(π/2) 어긋나 있습니다. cos θ = sin(θ + 90°)이기 때문입니다. 같은 회전을 다른 방향에서 본 그림자이니 당연한 결과입니다.</p>
+</section>
+
+<!-- 4 -->
+<section class="item" id="e4">
+<h2><span class="no">4</span> 왜 하필 cos과 sin일까</h2>
+<p>원 위의 점에서 실수축으로 수선을 내리면 반지름 1을 빗변으로 하는 직각삼각형이 생깁니다. 삼각비의 정의에 따라 밑변(가로)은 cos θ, 높이(세로)는 sin θ입니다. 가로는 실수부, 세로는 허수부이므로 원 위의 점은 다음과 같이 씁니다.</p>
+<div class="lab">
+  <div class="lab-title">그림 ④ 반지름 1을 빗변으로 하는 직각삼각형</div>
+  <canvas id="cvTri" data-w="640" data-h="300"></canvas>
+  <div class="row"><label for="trT">각도 θ</label><input type="range" id="trT" min="0" max="360" step="1" value="50"></div>
+  <div class="status" id="trOut"></div>
+</div>
+<div class="eq"><span class="seg">e<sup>iθ</sup> = cos θ + i sin θ</span> <span class="seg"><small>(오일러 공식)</small></span></div>
+<p>θ가 90°를 넘어 두 번째, 세 번째 사분면으로 가면 cos이나 sin이 음수가 되지만, 식은 그대로 성립합니다. 삼각함수를 원 위의 좌표로 정의하면 모든 각도에서 같은 식이 됩니다.</p>
+</section>
+
+<!-- 5 -->
+<section class="item" id="e5">
+<h2><span class="no">5</span> 무한급수를 화살표 길로 확인하기</h2>
+<p>그런데 정말 <span class="m">e<sup>iθ</sup></span>가 원 위에 있을까요. i는 정수가 아니어서 e를 i번 곱하는 반복 곱셈으로는 해석할 수 없습니다. 복소수 지수는 지수함수의 급수 정의로 다룹니다. 지수함수는 끝없는 덧셈(테일러 급수)으로 쓸 수 있습니다.</p>
+<div class="eq"><span class="seg">e<sup>x</sup> = 1 + x + x²/2! + x³/3! + x⁴/4! + ⋯</span></div>
+<p>x 자리에 iθ를 넣습니다. 복소수끼리 더하는 것은 화살표를 끝과 끝으로 이어 붙이는 것과 같으므로, 이 끝없는 덧셈은 화살표를 이어 붙인 길이 됩니다.</p>
+<div class="eq"><span class="seg">e<sup>iθ</sup> = 1 + iθ + (iθ)²/2! + (iθ)³/3! + (iθ)⁴/4! + ⋯</span></div>
+<div class="lab">
+  <div class="lab-title">그림 ⑤ 급수의 항을 화살표로 이어 붙이기</div>
+  <canvas id="cvSer" data-w="640" data-h="380"></canvas>
+  <div class="row">
+    <button class="btn" type="button" id="srStep">＋ 한 항 더하기</button>
+    <button class="btn" type="button" id="srAll">▶ 끝까지 이어 붙이기</button>
+    <button class="btn alt" type="button" id="srReset">↺ 처음으로</button>
+    <button class="btn seg" type="button" id="srSplit" aria-pressed="false">가로·세로 나눠 보기</button>
+  </div>
+  <div class="row"><label for="srT">θ</label><input type="range" id="srT" min="0" max="6.28" step="0.01" value="3.14"><button class="btn alt" type="button" id="srPi">θ = π</button></div>
+  <div class="status" id="srOut"></div>
+</div>
+<p>θ = π로 두고 항을 하나씩 이어 붙여 봅니다. 첫째 항은 오른쪽으로 길이 1인 화살표입니다. 둘째 항 iπ는 i가 한 번 곱해졌으니 90° 돌아 위로 약 3.14만큼 갑니다. 셋째 항 (iπ)²/2!은 i가 두 번 곱해져 −1이 되므로 다시 90° 돌아 왼쪽으로 약 4.93만큼, 넷째 항 (iπ)³/3!은 i가 세 번이니 −i, 아래로 약 5.17만큼 갑니다. 항이 하나 늘 때마다 i가 하나 더 곱해져 화살표는 90°씩 꺾입니다.</p>
+<p>처음에는 원 밖으로 크게 벗어나지만 다섯째 항부터는 화살표가 짧아집니다. 다음 항으로 갈 때 분자에는 π가 한 번 곱해지지만 분모에는 4, 5, 6처럼 π보다 큰 수가 곱해지기 때문입니다.</p>
+<div class="eq"><span class="seg">π<sup>n+1</sup>/(n+1)! = π<sup>n</sup>/n! × π/(n+1)</span></div>
+<p>항이 많아질수록 화살표 길이는 0에 가까워지고, 길은 안쪽으로 감겨 들어와 −1로 다가갑니다. 이 급수는 모든 θ에서 수렴하고, 지금처럼 θ = π이면 극한값이 정확히 −1입니다. 가로 화살표, 곧 짝수 차수 항(θ⁰, θ², θ⁴ …)만 모으면 cos θ의 테일러 급수, 세로 화살표인 홀수 차수 항(θ¹, θ³, θ⁵ …)만 모으면 sin θ의 테일러 급수와 항별로 일치합니다(아래 식, 그림은 θ = π인 경우). 짝수 차수 항은 실수부에, 홀수 차수 항은 허수부에 모입니다.</p>
+<div class="eq"><span class="seg">1 − θ²/2! + θ⁴/4! − ⋯ = cos θ,</span> <span class="seg">θ − θ³/3! + θ⁵/5! − ⋯ = sin θ</span></div>
+<p>θ = π에서 e<sup>iπ</sup> = −1, 여기에 1을 더하면 <b>e<sup>iπ</sup> + 1 = 0</b>입니다. 오일러 등식은 오일러 공식에서 θ 하나를 고른 결과입니다. 다른 θ에서도 화살표 길은 언제나 단위원 위의 점 cos θ + i sin θ에 닿습니다.</p>
+</section>
+
+<!-- 6 -->
+<section class="item" id="e6">
+<h2><span class="no">6</span> 왜 하필 밑이 e일까</h2>
+<p>밑을 2나 10으로 바꿔도 점은 원을 돕니다. <span class="m">2<sup>iθ</sup> = e<sup>iθ·ln 2</sup></span>(주값 기준)이므로 크기는 그대로 1이고 각도만 θ·ln 2가 됩니다. 문제는 걸음의 빠르기입니다.</p>
+<div class="lab">
+  <div class="lab-title">그림 ⑥ 밑 2, e, 10으로 θ = 0에서 π까지</div>
+  <canvas id="cvBase" data-w="640" data-h="320"></canvas>
+  <div class="row">
+    <button class="btn" type="button" id="bsPlay">▶ 0에서 π까지 돌리기</button>
+    <label for="bsT">θ</label><input type="range" id="bsT" min="0" max="3.1416" step="0.01" value="3.1416">
+  </div>
+  <div class="status" id="bsOut"></div>
+</div>
+<p>θ를 0에서 π까지 움직이면, 밑이 2일 때는 걸음이 느려 반 바퀴를 채우지 못하고 약 125°에서 멈춥니다(ln 2 ≈ 0.69). 밑이 10이면 너무 빨라 한 바퀴를 넘어 약 414°까지 갑니다(ln 10 ≈ 2.30). 밑이 e일 때만 ln e = 1이라 <b>걸은 길이와 돈 각도가 정확히 같고</b>, θ = π에서 딱 반 바퀴, −1에 닿습니다.</p>
+<p>그래서 e는 단순한 지수의 밑이 아닙니다. 미분해도 자기 자신이 되는 미적분의 수이고, 그 성질 덕분에 각도를 라디안으로 잴 때 회전과 지수가 정확히 맞물립니다. 자연상수 e와 지수함수, 그리고 삼각함수가 i를 통해 하나로 이어집니다.</p>
+</section>
+
+<!-- 7 -->
+<section class="item" id="e7">
+<h2><span class="no">7</span> 무선에서: 도는 화살표로 신호 더하기</h2>
+<p>교류 전압, 안테나 전류, 수신 신호처럼 출렁이는 신호를 다룰 때 공학에서는 신호를 <b>도는 화살표의 그림자</b>로 봅니다. 전기·전자에서는 전류 기호 i와 구분하려고 허수 단위를 j로 씁니다. 신호 A cos(ωt + φ)는 화살표 A e<sup>j(ωt+φ)</sup>의 실수부(가로 그림자)입니다. 삼각함수끼리의 계산이 지수의 곱셈과 화살표의 덧셈으로 바뀌어 간단해집니다. <span class="greek">φ: 파이, ω: 오메가</span></p>
+<p>예를 들어 주파수가 같은 신호 두 개를 더해 봅니다. 곡선끼리 더하면 삼각함수의 덧셈정리를 여러 번 써야 하지만, 도는 화살표로 보면 두 화살표를 끝과 끝으로 이어 붙이기만 하면 됩니다. 합쳐진 화살표도 같은 빠르기로 돌고, 그 그림자가 두 신호를 더한 결과입니다.</p>
+<div class="lab">
+  <div class="lab-title">그림 ⑦ 같은 주파수의 두 신호 더하기</div>
+  <canvas id="cvSum" data-w="640" data-h="300"></canvas>
+  <div class="row"><label for="smB">신호 B의 크기</label><input type="range" id="smB" min="0" max="1.5" step="0.05" value="0.8"></div>
+  <div class="row"><label for="smP">B가 A보다 앞선 위상 φ</label><input type="range" id="smP" min="0" max="360" step="1" value="60"></div>
+  <div class="row">
+    <button class="btn alt" type="button" data-sm="0,1">같은 위상(0°)</button>
+    <button class="btn alt" type="button" data-sm="90,1">90° 차이</button>
+    <button class="btn alt" type="button" data-sm="180,1">반대 위상(180°)</button>
+  </div>
+  <div class="legend"><i style="background:#1f5fbf"></i>신호 A <i style="background:#d9650b"></i>신호 B <i style="background:#2e9e5b"></i>합 A + B</div>
+  <div class="status" id="smOut"></div>
+</div>
+<p class="note">그림 ⑦은 파형을 옆으로 펼치기 쉽게 세로 그림자(sin)로 그렸습니다. 가로 그림자(cos)로 그리면 세 파형이 모두 똑같이 90° 옮겨질 뿐, 합의 크기와 두 신호 사이의 위상차는 같습니다.</p>
+<p>위상이 같으면 화살표가 한 줄로 이어져 합이 가장 크고, 위상이 반대이면 서로 지워집니다. 무선에서 이 계산이 나오는 곳은 많습니다.</p>
+<ul>
+  <li><b>위상 배열·2소자 수직 안테나:</b> 두 소자의 전류 위상을 조절해 어느 방향에서는 전파가 보강되고 다른 방향에서는 상쇄되게 만듭니다. 지향성 패턴이 곧 방향별 화살표 합입니다.</li>
+  <li><b>직접파와 반사파(다중 경로 페이딩):</b> 같은 신호가 길이가 다른 두 경로로 오면 위상차에 따라 세기가 오르내립니다. 이동 중 FM 신호가 일렁이는 이유입니다.</li>
+  <li><b>급전선의 정재파:</b> 진행파와 반사파 두 화살표의 합이 위치마다 달라져 전압의 최대·최소가 생기고, 그 비가 SWR입니다. 임피던스와 SWR 계산은 <a href="https://6k5ehn.tistory.com/entry/ham-formula%EA%B3%B5%EC%A7%84-%EC%9E%84%ED%94%BC%EB%8D%98%EC%8A%A4-SWR" target="_top" rel="noopener">「ham-formula: 공진, 임피던스, SWR」</a>에서 이어집니다.</li>
+</ul>
+</section>
+
+<!-- 8 -->
+<section class="item" id="e8">
+<h2><span class="no">8</span> 정리</h2>
+<table>
+  <tr><th>그림</th><th>보여 준 것</th></tr>
+  <tr><td>① 나선</td><td>e<sup>iθ</sup>는 원을 돌며 나아가는 하나의 움직임. 앞에서 원, 옆에서 sin, 밑에서 cos</td></tr>
+  <tr><td>② 실수 지수와 허수 지수</td><td>속도가 위치와 같은 방향이면 커지고, 직각이면 돈다. θ = 걸은 길이(라디안)</td></tr>
+  <tr><td>③ 그림자 펼치기</td><td>세로 그림자 sin, 가로 그림자 cos, 90° 차이</td></tr>
+  <tr><td>④ 직각삼각형</td><td>e<sup>iθ</sup> = cos θ + i sin θ</td></tr>
+  <tr><td>⑤ 급수의 화살표 길</td><td>90°씩 꺾이며 감겨 들어가 cos θ + i sin θ에 닿음, e<sup>iπ</sup> + 1 = 0</td></tr>
+  <tr><td>⑥ 밑 비교</td><td>밑이 e일 때만 걸은 길이 = 돈 각도</td></tr>
+  <tr><td>⑦ 신호 더하기</td><td>같은 주파수 신호의 합 = 도는 화살표의 합. 위상 배열, 페이딩, 정재파</td></tr>
+</table>
+<p>오일러 공식은 지수함수, 삼각함수, 복소수를 한 줄로 묶습니다. 무선에서 교류 회로의 j, 임피던스, 페이저, I/Q 신호가 모두 이 한 줄 위에서 계산됩니다. 허수 단위 j와 회로·안테나·SDR에서의 쓰임은 「허수 j」 페이지에서 이어집니다.</p>
+</section>
+
+<section class="seealso" aria-label="함께 보기">
+<h2>함께 보기</h2>
+<ul>
+  <li><a class="sa" href="https://6k5ehn.tistory.com/entry/ham-formula%EA%B3%B5%EC%A7%84-%EC%9E%84%ED%94%BC%EB%8D%98%EC%8A%A4-SWR" target="_top" rel="noopener"><b>ham-formula: 공진, 임피던스, SWR</b><span>페이저로 계산하는 공진, 임피던스, 반사와 SWR, 스미스 차트 (7단원)</span><i aria-hidden="true">↗</i></a></li>
+  <li><a class="sa" href="https://6k5ehn.tistory.com/entry/%EA%B5%90%EA%B3%BC%EC%84%9C-%EC%86%8D-%EB%AC%B4%EC%84%A0%EA%B3%B5%EC%8B%9D" target="_top" rel="noopener"><b>교과서 속 무선공식</b><span>삼각함수, 지수·로그, 미분 등 학교 수학 단원과 무선 공식 연결 (2·4·6단원)</span><i aria-hidden="true">↗</i></a></li>
+</ul>
+<p class="blogview"><a href="https://6k5ehn.tistory.com/entry/%EC%95%84%EB%A7%88%EC%B6%94%EC%96%B4-%EB%AC%B4%EC%84%A0%EC%82%AC%EB%A5%BC-%EC%9C%84%ED%95%9C-%ED%97%88%EC%88%98-j" target="_top" rel="noopener">블로그 글에서 보기 (6K5EHN 블로그) ↗</a></p>
+</section>
+
+<footer>
+  듣기는 기기에 들어 있는 음성(Web Speech API)으로 읽으며, 화면 글을 그대로 읽지 않고 따로 쓴 해설 대본을 읽습니다.
+</footer>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const TAU=Math.PI*2, STEP=1/60;
+const C={blue:"#1f5fbf",orange:"#d9650b",grid:"#e6eaf0",axis:"#5b667a",ink:"#1d2330",green:"#1f8a4c",red:"#c0392b",sub:"#6b7588"};
+
+function prep(id){
+  const c=$(id), w=+c.dataset.w, h=+c.dataset.h, d=window.devicePixelRatio||1;
+  c.width=w*d; c.height=h*d;
+  const x=c.getContext("2d"); x.setTransform(d,0,0,d,0,0);
+  return {c,x,w,h};
+}
+function arrow(x,x0,y0,x1,y1,col,lw){
+  lw=lw||3; const a=Math.atan2(y1-y0,x1-x0), L=Math.hypot(x1-x0,y1-y0), hs=Math.min(12,L*0.4);
+  x.strokeStyle=col; x.fillStyle=col; x.lineWidth=lw; x.lineCap="round";
+  x.beginPath(); x.moveTo(x0,y0); x.lineTo(x1-Math.cos(a)*hs*0.6,y1-Math.sin(a)*hs*0.6); x.stroke();
+  if(L<2) return;
+  x.beginPath(); x.moveTo(x1,y1);
+  x.lineTo(x1-hs*Math.cos(a-0.4),y1-hs*Math.sin(a-0.4));
+  x.lineTo(x1-hs*Math.cos(a+0.4),y1-hs*Math.sin(a+0.4)); x.closePath(); x.fill();
+}
+function text(x,s,px,py,col,size,align){
+  x.fillStyle=col||C.ink; x.font=(size||13)+"px 'Noto Sans KR','Apple SD Gothic Neo',sans-serif";
+  x.textAlign=align||"left"; x.textBaseline="middle"; x.fillText(s,px,py);
+}
+/* 좁은 화면(휴대폰)에서는 가로로 나란한 두 부분을 위아래로 쌓아 그립니다.
+   draw는 넓은 화면 좌표(폭 w)로 그대로 그리고, 왼쪽 [0,L]을 위에, 오른쪽 [L,w]를 아래에 놓습니다. */
+function stackable(P,L){
+  const c=P.c, W=P.w, H=P.h, d=window.devicePixelRatio||1, st={narrow:null,cw:W,ch:H};
+  function layout(){
+    const nar=(c.parentElement.clientWidth||W)<560;
+    if(nar===st.narrow) return false;
+    st.narrow=nar; st.cw=nar?Math.max(L,W-L):W; st.ch=nar?2*H:H;
+    c.width=st.cw*d; c.height=st.ch*d; return true;
+  }
+  function render(fn){
+    layout(); const x=P.x; x.setTransform(d,0,0,d,0,0);
+    if(!st.narrow){ fn(); return; }
+    x.clearRect(0,0,st.cw,st.ch);
+    x.save(); x.translate((st.cw-L)/2,0); x.beginPath(); x.rect(0,0,L,H); x.clip(); fn(); x.restore();
+    x.save(); x.translate(-L+(st.cw-(W-L))/2,H); x.beginPath(); x.rect(L,0,W-L,H); x.clip(); fn(); x.restore();
+    x.strokeStyle="#e6eaf0"; x.lineWidth=1; x.beginPath(); x.moveTo(10,H); x.lineTo(st.cw-10,H); x.stroke();
+  }
+  let t=null; window.addEventListener("resize",()=>{ clearTimeout(t); t=setTimeout(()=>{ if(layout()&&render.onresize) render.onresize(); },120); });
+  return render;
+}
+function rrect(x,X,Y,W,H,r){ x.beginPath(); x.moveTo(X+r,Y); x.arcTo(X+W,Y,X+W,Y+H,r); x.arcTo(X+W,Y+H,X,Y+H,r); x.arcTo(X,Y+H,X,Y,r); x.arcTo(X,Y,X+W,Y,r); x.closePath(); }
+function gamma(R,X,z0){ z0=z0||50; const nr=R-z0, dr=R+z0, dd=dr*dr+X*X; return [(nr*dr+X*X)/dd,(X*dr-nr*X)/dd]; }
+function smith(x,cx,cy,r,grid,edge){
+  x.save(); x.beginPath(); x.arc(cx,cy,r,0,TAU); x.clip(); x.strokeStyle=grid; x.lineWidth=1;
+  [0.2,0.5,1,2,5].forEach(rn=>{ x.beginPath(); x.arc(cx+rn/(1+rn)*r,cy,r/(1+rn),0,TAU); x.stroke(); });
+  [0.2,0.5,1,2,5].forEach(xn=>{ [1,-1].forEach(sg=>{ x.beginPath(); x.arc(cx+r,cy-sg*r/xn,r/xn,0,TAU); x.stroke(); }); });
+  x.beginPath(); x.moveTo(cx-r,cy); x.lineTo(cx+r,cy); x.stroke(); x.restore();
+  x.strokeStyle=edge; x.lineWidth=1.5; x.beginPath(); x.arc(cx,cy,r,0,TAU); x.stroke();
+}
+function num(v,d){ d=d===undefined?2:d; const r=Math.round(v*Math.pow(10,d))/Math.pow(10,d); return Object.is(r,-0)?0:r; }
+function cstr(re,im,u){
+  u=u||"i"; re=num(re); im=num(im);
+  if(im===0) return String(re).replace("-","−");
+  const a=Math.abs(im), ims=u==="j"?"j"+(a===1?"":a):(a===1?"":a)+u;
+  const rs=String(re).replace("-","−");
+  if(re===0) return (im<0?"−":"")+ims;
+  return rs+(im<0?" − ":" + ")+ims;
+}
+
+/* ---------- 그림 ① 나선 (3차원) ---------- */
+(function(){
+  const P=prep("cvHx"), x=P.x, w=P.w, h=P.h, cx=w/2, cy=h/2+6, S=74, TMAX=4*Math.PI, L=4.6;
+  const VIEWS={obl:[0.62,0.38], front:[Math.PI/2,0], side:[0,0], bottom:[0,-Math.PI/2]};
+  let yaw=VIEWS.obl[0], pitch=VIEWS.obl[1], tYaw=yaw, tPitch=pitch, prog=1, drawing=false, last=performance.now(), view="obl";
+  /* 세계 좌표: X = θ축(오른쪽), Y = 허수축(위), Z = 실수축(앞) */
+  function proj(X,Y,Z){
+    const c=Math.cos(yaw), s=Math.sin(yaw);
+    const X1=X*c+Z*s, Z1=-X*s+Z*c;
+    const cp=Math.cos(pitch), sp=Math.sin(pitch);
+    const Y1=Y*cp-Z1*sp;
+    return [cx+X1*S, cy-Y1*S];
+  }
+  const Xof=t=>(t/TMAX-0.5)*L;
+  function line(pts,col,lw,dash){ x.strokeStyle=col; x.lineWidth=lw; x.setLineDash(dash||[]); x.beginPath(); pts.forEach((p,k)=>{ k?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]); }); x.stroke(); x.setLineDash([]); }
+  function paint(){
+    x.clearRect(0,0,w,h);
+    const tEnd=prog*TMAX, N=240, pts=[], sh=[], fl=[];
+    for(let k=0;k<=N;k++){ const t=tEnd*k/N; pts.push(proj(Xof(t),Math.sin(t),Math.cos(t))); sh.push(proj(Xof(t),Math.sin(t),-1.35)); fl.push(proj(Xof(t),-1.35,Math.cos(t))); }
+    /* 축 */
+    line([proj(Xof(0)-0.2,0,0),proj(Xof(TMAX)+0.35,0,0)],"#9aa6bb",1.2);
+    line([proj(Xof(0),-1.25,0),proj(Xof(0),1.3,0)],"#9aa6bb",1.2);
+    line([proj(Xof(0),0,-1.25),proj(Xof(0),0,1.3)],"#9aa6bb",1.2);
+    const lt=proj(Xof(TMAX)+0.45,0,0), li=proj(Xof(0),1.45,0), lr=proj(Xof(0),0,1.5);
+    const o0=proj(Xof(0),0,0), vis=p=>Math.hypot(p[0]-o0[0],p[1]-o0[1])>28;
+    if(vis(lt)) text(x,"θ",lt[0],lt[1],C.sub,13,"center"); if(vis(li)) text(x,"허수",li[0],li[1],C.sub,12,"center"); if(vis(lr)) text(x,"실수",lr[0],lr[1],C.sub,12,"center");
+    /* 단위원(θ = 0) */
+    const ring=[]; for(let k=0;k<=60;k++){ const a=k/60*TAU; ring.push(proj(Xof(0),Math.sin(a),Math.cos(a))); } line(ring,"#c9d2e0",1,[3,3]);
+    line(sh,"rgba(217,101,11,.85)",2); line(fl,"rgba(46,158,91,.85)",2);
+    line(pts,"#1d2330",2.6);
+    const t=tEnd, p=proj(Xof(t),Math.sin(t),Math.cos(t)), q=proj(Xof(t),0,0);
+    line([q,p],C.blue,2);
+    x.fillStyle=C.blue; x.beginPath(); x.arc(p[0],p[1],5,0,TAU); x.fill();
+    const name={obl:"비스듬히 본 나선",front:"앞에서: θ축이 점으로 겹쳐 원",side:"옆에서: 세로축 = 허수축 → sin θ",bottom:"밑에서: 세로축 = 실수축 → cos θ"}[view];
+    text(x,name,14,18,C.ink,13);
+    text(x,"끌어서 돌려 보기",w-12,h-12,C.sub,11,"right");
+  }
+  function frame(t){
+    const dt=Math.min(0.05,(t-last)/1000); last=t;
+    let moving=false;
+    if(Math.abs(tYaw-yaw)>0.002||Math.abs(tPitch-pitch)>0.002){ yaw+=(tYaw-yaw)*Math.min(1,dt*5); pitch+=(tPitch-pitch)*Math.min(1,dt*5); moving=true; }
+    if(drawing){ prog=Math.min(1,prog+dt/4); if(prog>=1) drawing=false; moving=true; }
+    if(moving||dirty){ paint(); dirty=false; }
+    $("hxOut").textContent="θ = 0 → "+(prog*4).toFixed(2)+"π   (점은 θ만큼 원을 돌고, θ축 방향으로도 나아감)";
+    requestAnimationFrame(frame);
+  }
+  let dirty=true;
+  function setView(v){ view=v; tYaw=VIEWS[v][0]; tPitch=VIEWS[v][1]; document.querySelectorAll("[data-hv]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.hv===v?"true":"false")); dirty=true; }
+  document.querySelectorAll("[data-hv]").forEach(b=>b.onclick=()=>setView(b.dataset.hv));
+  $("hxDraw").onclick=()=>{ prog=0; drawing=true; };
+  /* 끌어서 돌리기 */
+  let drag=null; const cv=P.c;
+  cv.style.touchAction="pan-y"; cv.style.cursor="grab";
+  cv.addEventListener("pointerdown",e=>{ drag=[e.clientX,e.clientY,tYaw,tPitch]; cv.setPointerCapture(e.pointerId); cv.style.cursor="grabbing"; });
+  cv.addEventListener("pointermove",e=>{ if(!drag) return; const k=0.01; tYaw=drag[2]+(e.clientX-drag[0])*k; tPitch=Math.max(-1.57,Math.min(1.57,drag[3]+(e.clientY-drag[1])*k)); yaw=tYaw; pitch=tPitch; view="obl"; document.querySelectorAll("[data-hv]").forEach(b=>b.setAttribute("aria-pressed","false")); dirty=true; });
+  const up=()=>{ drag=null; cv.style.cursor="grab"; };
+  cv.addEventListener("pointerup",up); cv.addEventListener("pointercancel",up);
+  window.addEventListener("resize",()=>{ dirty=true; });
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- 그림 ② 실수 지수와 허수 지수 ---------- */
+(function(){
+  const P=prep("cvGrow"), x=P.x, w=P.w, h=P.h, RN=stackable(P,300);
+  function paint(){
+    const t=+$("grT").value;
+    x.clearRect(0,0,w,h);
+    /* 왼쪽: e^x */
+    const ox=40, oy=280, sx=100, sy=22;
+    text(x,"실수 지수: e^x",20,22,C.ink,14);
+    x.strokeStyle=C.axis; x.lineWidth=1.2; x.beginPath(); x.moveTo(ox,oy); x.lineTo(ox+250,oy); x.moveTo(ox,oy); x.lineTo(ox,40); x.stroke();
+    for(const [b,col] of [[2,"#9aa6bb"],[Math.E,C.blue]]){ x.strokeStyle=col; x.lineWidth=2; x.beginPath(); for(let X=0;X<=2.4;X+=0.02){ const Y=Math.pow(b,X); const px=ox+X*sx, py=oy-Y*sy; X?x.lineTo(px,py):x.moveTo(px,py); } x.stroke(); }
+    text(x,"e^x",ox+2.4*sx+4,oy-Math.exp(2.4)*sy,C.blue,12); text(x,"2^x",ox+2.4*sx+4,oy-Math.pow(2,2.4)*sy,C.sub,12);
+    const xs=Math.min(2.4,t*2.4/6.28), ys=Math.exp(xs), px=ox+xs*sx, py=oy-ys*sy;
+    x.fillStyle=C.blue; x.beginPath(); x.arc(px,py,5,0,TAU); x.fill();
+    const dx=1, dy=ys, m=Math.hypot(dx*sx,dy*sy); arrow(x,px,py,px+dx*sx/m*45,py-dy*sy/m*45,C.orange,2.5);
+    text(x,"커지는 쪽으로 더 빨리 커짐",20,oy+14,C.sub,11);
+    x.strokeStyle="#e6eaf0"; x.lineWidth=1; x.beginPath(); x.moveTo(300,15); x.lineTo(300,h-15); x.stroke();
+    /* 오른쪽: e^{iθ} */
+    const cx=470, cy=165, r=105;
+    text(x,"허수 지수: e^(iθ)",320,22,C.ink,14);
+    x.strokeStyle=C.grid; x.lineWidth=1; x.beginPath(); x.arc(cx,cy,r,0,TAU); x.stroke();
+    x.strokeStyle=C.axis; x.lineWidth=1.2; x.beginPath(); x.moveTo(cx-r-20,cy); x.lineTo(cx+r+20,cy); x.moveTo(cx,cy+r+18); x.lineTo(cx,cy-r-18); x.stroke();
+    text(x,"1",cx+r+4,cy+12,C.sub,11); text(x,"−1",cx-r-4,cy+12,C.sub,11,"right"); text(x,"i",cx+6,cy-r-10,C.sub,12);
+    x.strokeStyle="#e2557f"; x.lineWidth=4; x.beginPath(); x.arc(cx,cy,r,0,-t,true); x.stroke();
+    const qx=cx+r*Math.cos(t), qy=cy-r*Math.sin(t);
+    arrow(x,cx,cy,qx,qy,C.blue,2.5);
+    arrow(x,qx,qy,qx-Math.sin(t)*55,qy-Math.cos(t)*55,C.orange,2.5);
+    x.fillStyle=C.blue; x.beginPath(); x.arc(qx,qy,5,0,TAU); x.fill();
+    text(x,"걸은 길이 θ",cx-r+4,cy+r+12,"#c0395f",12);
+    const T=t/Math.PI;
+    $("grOut").textContent="θ = "+t.toFixed(2)+" ("+(T).toFixed(2)+"π, "+Math.round(t*180/Math.PI)+"°)   크기 |e^(iθ)| = 1   속도 방향 = 위치에서 90°   e^(iθ) = "+cstr(Math.cos(t),Math.sin(t))+(Math.abs(t-Math.PI)<0.02?"   → 반 바퀴, −1":"");
+  }
+  const draw=()=>RN(paint); RN.onresize=draw;
+  $("grT").oninput=draw; draw();
+})();
+
+/* ---------- 그림 ③ 그림자 펼치기 ---------- */
+(function(){
+  const P=prep("cvProj"), x=P.x, w=P.w, h=P.h, cx=120, cy=h/2, R=95, x0=250;
+  let th=0, play=true, last=performance.now(), acc=0, mode="both"; const hs=[], hc=[];
+  function frame(t){
+    const dt=Math.min(0.05,(t-last)/1000); last=t;
+    if(play){ acc+=dt; while(acc>=STEP){ acc-=STEP; th+=STEP*1.1; hs.unshift(Math.sin(th)); hc.unshift(Math.cos(th)); if(hs.length>w-x0-12){ hs.pop(); hc.pop(); } } }
+    x.clearRect(0,0,w,h);
+    x.strokeStyle=C.grid; x.lineWidth=1; x.beginPath(); x.arc(cx,cy,R,0,TAU); x.stroke();
+    x.strokeStyle=C.axis; x.lineWidth=1.2; x.beginPath(); x.moveTo(cx-R-14,cy); x.lineTo(cx+R+14,cy); x.moveTo(cx,cy-R-14); x.lineTo(cx,cy+R+14); x.moveTo(x0,cy); x.lineTo(w-8,cy); x.stroke();
+    text(x,"실수",cx+R+16,cy+12,C.sub,11); text(x,"허수",cx+6,cy-R-12,C.sub,11); text(x,"θ →",w-10,cy+R+4,C.sub,11,"right");
+    const px=cx+R*Math.cos(th), py=cy-R*Math.sin(th);
+    const showS=mode!=="cos", showC=mode!=="sin";
+    if(showC){ x.strokeStyle="#2e9e5b"; x.lineWidth=4; x.beginPath(); x.moveTo(cx,cy); x.lineTo(px,cy); x.stroke();
+      x.strokeStyle="#2e9e5b"; x.lineWidth=2.2; x.setLineDash([6,4]); x.beginPath(); hc.forEach((v,k)=>{ const X=x0+k, Y=cy-R*v; k?x.lineTo(X,Y):x.moveTo(X,Y); }); x.stroke(); x.setLineDash([]); }
+    if(showS){ x.strokeStyle=C.orange; x.lineWidth=4; x.beginPath(); x.moveTo(px,cy); x.lineTo(px,py); x.stroke();
+      x.setLineDash([3,4]); x.strokeStyle="#c7a07a"; x.lineWidth=1; x.beginPath(); x.moveTo(px,py); x.lineTo(x0,py); x.stroke(); x.setLineDash([]);
+      x.strokeStyle=C.orange; x.lineWidth=2.6; x.beginPath(); hs.forEach((v,k)=>{ const X=x0+k, Y=cy-R*v; k?x.lineTo(X,Y):x.moveTo(X,Y); }); x.stroke(); }
+    arrow(x,cx,cy,px,py,C.blue,3);
+    if(showS&&showC) text(x,"cos(초록)이 sin(주황)보다 90° 앞섬",w-10,18,C.sub,12,"right");
+    const deg=Math.round((th*180/Math.PI)%360);
+    $("pjOut").textContent="θ = "+deg+"°   sin θ = "+num(Math.sin(th))+"   cos θ = "+num(Math.cos(th));
+    requestAnimationFrame(frame);
+  }
+  $("pjPlay").onclick=function(){ play=!play; this.setAttribute("aria-pressed",play?"true":"false"); this.textContent=play?"⏸ 멈추기":"▶ 다시 돌리기"; };
+  document.querySelectorAll("[data-pj]").forEach(b=>b.onclick=()=>{ mode=b.dataset.pj; document.querySelectorAll("[data-pj]").forEach(c=>c.setAttribute("aria-pressed",c===b?"true":"false")); });
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- 그림 ④ 직각삼각형 ---------- */
+(function(){
+  const P=prep("cvTri"), x=P.x, w=P.w, h=P.h, cx=165, cy=h/2, R=115, RN=stackable(P,330);
+  function paint(){
+    const d=+$("trT").value, a=d*Math.PI/180, px=cx+R*Math.cos(a), py=cy-R*Math.sin(a);
+    x.clearRect(0,0,w,h);
+    x.strokeStyle=C.grid; x.lineWidth=1; x.beginPath(); x.arc(cx,cy,R,0,TAU); x.stroke();
+    x.strokeStyle=C.axis; x.lineWidth=1.2; x.beginPath(); x.moveTo(cx-R-20,cy); x.lineTo(cx+R+20,cy); x.moveTo(cx,cy-R-18); x.lineTo(cx,cy+R+18); x.stroke();
+    text(x,"1",cx+R+4,cy+12,C.sub,11); text(x,"i",cx+6,cy-R-10,C.sub,12);
+    x.fillStyle="rgba(31,95,191,.08)"; x.beginPath(); x.moveTo(cx,cy); x.lineTo(px,cy); x.lineTo(px,py); x.closePath(); x.fill();
+    x.strokeStyle="#2e9e5b"; x.lineWidth=4; x.beginPath(); x.moveTo(cx,cy); x.lineTo(px,cy); x.stroke();
+    x.strokeStyle=C.orange; x.lineWidth=4; x.beginPath(); x.moveTo(px,cy); x.lineTo(px,py); x.stroke();
+    if(Math.abs(Math.sin(a))>0.08&&Math.abs(Math.cos(a))>0.08){ const sx=Math.sign(Math.cos(a)), sy=Math.sign(Math.sin(a)); x.strokeStyle=C.sub; x.lineWidth=1; x.beginPath(); x.moveTo(px-sx*10,cy); x.lineTo(px-sx*10,cy-sy*10); x.lineTo(px,cy-sy*10); x.stroke(); }
+    arrow(x,cx,cy,px,py,C.blue,3);
+    x.strokeStyle=C.sub; x.lineWidth=1.5; x.beginPath(); x.arc(cx,cy,26,0,-a,a>0); x.stroke(); text(x,"θ",cx+34*Math.cos(a/2),cy-34*Math.sin(a/2),C.sub,13,"center");
+    text(x,"1",cx+(R/2)*Math.cos(a)-10*Math.sin(a),cy-(R/2)*Math.sin(a)-10*Math.cos(a),C.blue,14,"center");
+    text(x,"cos θ",(cx+px)/2,cy+(Math.sin(a)>=0?16:-14),"#2e9e5b",13,"center");
+    text(x,"sin θ",px+(Math.cos(a)>=0?8:-8),(cy+py)/2,C.orange,13,Math.cos(a)>=0?"left":"right");
+    const X0=350; let y=50;
+    text(x,"θ = "+d+"°",X0,y,C.ink,15); y+=34;
+    text(x,"가로(실수부) = cos θ = "+num(Math.cos(a)),X0,y,"#2e9e5b",14); y+=28;
+    text(x,"세로(허수부) = sin θ = "+num(Math.sin(a)),X0,y,C.orange,14); y+=40;
+    text(x,"점 = cos θ + i sin θ",X0,y,C.ink,15); y+=28;
+    text(x,"    = "+cstr(Math.cos(a),Math.sin(a)),X0,y,C.blue,15); y+=40;
+    text(x,"빗변 = 반지름 = 1",X0,y,C.sub,13);
+  }
+  const draw=()=>RN(paint); RN.onresize=draw;
+  $("trT").oninput=()=>{ draw(); const d=+$("trT").value; $("trOut").textContent="θ = "+d+"°   사분면 "+(d%360<90?"1":d%360<180?"2":d%360<270?"3":"4")+"   cos θ = "+num(Math.cos(d*Math.PI/180))+", sin θ = "+num(Math.sin(d*Math.PI/180)); };
+  $("trT").oninput();
+})();
+
+/* ---------- 그림 ⑤ 급수의 화살표 길 ---------- */
+(function(){
+  const P=prep("cvSer"), x=P.x, w=P.w, h=P.h, RN=stackable(P,420), MAXN=24;
+  let n=1, timer=null, split=false;
+  const dirs=["→","↑","←","↓"];
+  function terms(th,N){ const out=[]; let mag=1; for(let k=0;k<N;k++){ if(k>0) mag*=th/k; const q=k%4; const v=[[mag,0],[0,mag],[-mag,0],[0,-mag]][q]; out.push(v); } return out; }
+  function paint(){
+    const th=+$("srT").value, T=terms(th,n);
+    let pts=[[0,0]], s=[0,0]; T.forEach(v=>{ s=[s[0]+v[0],s[1]+v[1]]; pts.push(s.slice()); });
+    const allT=terms(th,MAXN); let mx=1.2, z=[0,0]; allT.slice(0,Math.max(n,4)).forEach(v=>{ z=[z[0]+v[0],z[1]+v[1]]; mx=Math.max(mx,Math.abs(z[0]),Math.abs(z[1])); });
+    const ox=210, oy=h/2, sc=Math.min(150,165/mx);
+    x.clearRect(0,0,w,h);
+    x.strokeStyle=C.axis; x.lineWidth=1.2; x.beginPath(); x.moveTo(20,oy); x.lineTo(400,oy); x.moveTo(ox,15); x.lineTo(ox,h-15); x.stroke();
+    x.strokeStyle="#9aa6bb"; x.lineWidth=1.2; x.setLineDash([4,4]); x.beginPath(); x.arc(ox,oy,sc,0,TAU); x.stroke(); x.setLineDash([]);
+    text(x,"단위원",ox+sc*0.72+4,oy-sc*0.72-4,C.sub,11);
+    const E=[Math.cos(th),Math.sin(th)];
+    x.strokeStyle="#e2557f"; x.lineWidth=2; x.beginPath(); x.arc(ox+E[0]*sc,oy-E[1]*sc,7,0,TAU); x.stroke();
+    for(let k=0;k<T.length;k++){
+      const a=pts[k], b=pts[k+1]; const even=k%2===0;
+      const col=split?(even?"#2e9e5b":C.orange):(k===T.length-1?C.blue:"#1d2330");
+      if(Math.hypot(b[0]-a[0],b[1]-a[1])*sc<1.5) continue;
+      arrow(x,ox+a[0]*sc,oy-a[1]*sc,ox+b[0]*sc,oy-b[1]*sc,col,k===T.length-1?3:2.2);
+    }
+    const last=pts[pts.length-1];
+    x.fillStyle=C.blue; x.beginPath(); x.arc(ox+last[0]*sc,oy-last[1]*sc,4,0,TAU); x.fill();
+    /* 패널 */
+    const X0=430; let y=26;
+    text(x,"θ = "+th.toFixed(2)+(Math.abs(th-Math.PI)<0.01?" (= π)":""),X0,y,C.ink,14); y+=26;
+    text(x,"이어 붙인 항: "+n+"개",X0,y,C.ink,13); y+=24;
+    const show=Math.min(n,8), start=Math.max(0,n-show);
+    for(let k=start;k<n;k++){ const mag=Math.pow(th,k)/fact(k); text(x,"θ"+String(k).split("").map(c=>"⁰¹²³⁴⁵⁶⁷⁸⁹"[+c]).join("")+" 항 "+dirs[k%4]+"  "+mag.toFixed(2),X0,y,split?(k%2===0?"#2e9e5b":C.orange):(k===n-1?C.blue:C.sub),12); y+=19; }
+    y+=8;
+    text(x,"합 = "+cstr(last[0],last[1]),X0,y,C.blue,13); y+=22;
+    text(x,"cos θ + i sin θ = "+cstr(E[0],E[1]),X0,y,"#c0395f",12); y+=20;
+    const err=Math.hypot(last[0]-E[0],last[1]-E[1]);
+    text(x,"남은 거리 "+err.toFixed(3),X0,y,C.sub,12);
+    $("srOut").textContent="항 "+n+"개   합 = "+cstr(last[0],last[1])+"   목표 cos θ + i sin θ = "+cstr(E[0],E[1])+"   남은 거리 "+err.toFixed(3)+(split?"   초록: 짝수 차수 항(실수부) → cos, 주황: 홀수 차수 항(허수부) → sin":"");
+  }
+  function fact(k){ let f=1; for(let i=2;i<=k;i++) f*=i; return f; }
+  const draw=()=>RN(paint); RN.onresize=draw;
+  function stop(){ clearInterval(timer); timer=null; }
+  $("srStep").onclick=()=>{ stop(); n=Math.min(MAXN,n+1); draw(); };
+  $("srAll").onclick=()=>{ stop(); timer=setInterval(()=>{ if(n>=MAXN){ stop(); return; } n++; draw(); },450); };
+  $("srReset").onclick=()=>{ stop(); n=1; draw(); };
+  $("srSplit").onclick=function(){ split=!split; this.setAttribute("aria-pressed",split?"true":"false"); draw(); };
+  $("srPi").onclick=()=>{ $("srT").value=Math.PI; draw(); };
+  $("srT").oninput=draw;
+  draw();
+})();
+
+/* ---------- 그림 ⑥ 밑 비교 ---------- */
+(function(){
+  const P=prep("cvBase"), x=P.x, w=P.w, h=P.h, cx=165, cy=h/2, RN=stackable(P,330);
+  const B=[["2",Math.log(2),"#9ccc3d",96],["e",1,C.blue,112],["10",Math.log(10),"#e8743b",128]];
+  let anim=null;
+  function paint(){
+    const th=+$("bsT").value;
+    x.clearRect(0,0,w,h);
+    x.strokeStyle=C.axis; x.lineWidth=1.2; x.beginPath(); x.moveTo(cx-150,cy); x.lineTo(cx+150,cy); x.moveTo(cx,cy-148); x.lineTo(cx,cy+148); x.stroke();
+    text(x,"1",cx+140,cy+12,C.sub,11); text(x,"−1",cx-140,cy+12,C.sub,11,"right");
+    B.forEach(([nm,k,col,r])=>{
+      x.strokeStyle="rgba(150,160,180,.35)"; x.lineWidth=1; x.beginPath(); x.arc(cx,cy,r,0,TAU); x.stroke();
+      const a=th*k; x.strokeStyle=col; x.lineWidth=3.5; x.beginPath(); x.arc(cx,cy,r,0,-a,true); x.stroke();
+      x.fillStyle=col; x.beginPath(); x.arc(cx+r*Math.cos(a),cy-r*Math.sin(a),6,0,TAU); x.fill();
+    });
+    const X0=350; let y=40;
+    text(x,"θ = "+th.toFixed(2)+(Math.abs(th-Math.PI)<0.005?" (= π)":""),X0,y,C.ink,15); y+=34;
+    B.forEach(([nm,k,col])=>{ const deg=th*k*180/Math.PI; text(x,"● 밑 "+nm+":  돈 각도 "+deg.toFixed(0)+"°",X0,y,col,14); y+=22; text(x,"   (각도 = θ × ln "+nm+" = θ × "+k.toFixed(2)+")",X0,y,C.sub,12); y+=28; });
+    text(x,"반 바퀴(180°)에 정확히 닿는 것은 밑 e뿐",X0,y+4,C.ink,13);
+    $("bsOut").textContent="θ = "+th.toFixed(2)+"   밑 2: "+(th*Math.log(2)*180/Math.PI).toFixed(0)+"°   밑 e: "+(th*180/Math.PI).toFixed(0)+"°   밑 10: "+(th*Math.log(10)*180/Math.PI).toFixed(0)+"°";
+  }
+  const draw=()=>RN(paint); RN.onresize=draw;
+  $("bsT").oninput=draw;
+  $("bsPlay").onclick=()=>{ cancelAnimationFrame(anim); const t0=performance.now(); (function step(t){ const u=Math.min(1,(t-t0)/4000); $("bsT").value=u*Math.PI; draw(); if(u<1) anim=requestAnimationFrame(step); })(t0); };
+  draw();
+})();
+
+/* ---------- 그림 ⑦ 두 신호 더하기 ---------- */
+(function(){
+  const P=prep("cvSum"), x=P.x, w=P.w, h=P.h, cx=115, cy=h/2, R=60, x0=250;
+  let wt=0, last=performance.now(), acc=0; const ha=[], hb=[], hs=[];
+  function frame(t){
+    const dt=Math.min(0.05,(t-last)/1000); last=t;
+    const Bm=+$("smB").value, ph=+$("smP").value*Math.PI/180;
+    acc+=dt; while(acc>=STEP){ acc-=STEP; wt+=STEP*1.3; ha.unshift(Math.sin(wt)); hb.unshift(Bm*Math.sin(wt+ph)); hs.unshift(Math.sin(wt)+Bm*Math.sin(wt+ph)); if(ha.length>w-x0-10){ ha.pop(); hb.pop(); hs.pop(); } }
+    x.clearRect(0,0,w,h);
+    x.strokeStyle=C.axis; x.lineWidth=1.1; x.beginPath(); x.moveTo(cx-2.6*R+40,cy); x.lineTo(cx+2.6*R-30,cy); x.moveTo(cx,cy-2.3*R); x.lineTo(cx,cy+2.3*R); x.moveTo(x0,cy); x.lineTo(w-6,cy); x.stroke();
+    const A=[Math.cos(wt),Math.sin(wt)], Bv=[Bm*Math.cos(wt+ph),Bm*Math.sin(wt+ph)], S=[A[0]+Bv[0],A[1]+Bv[1]];
+    const sc=R*0.95;
+    arrow(x,cx,cy,cx+A[0]*sc,cy-A[1]*sc,C.blue,3);
+    if(Bm>0.02) arrow(x,cx+A[0]*sc,cy-A[1]*sc,cx+S[0]*sc,cy-S[1]*sc,C.orange,3);
+    if(Math.hypot(S[0],S[1])>0.03) arrow(x,cx,cy,cx+S[0]*sc,cy-S[1]*sc,"#2e9e5b",3.5);
+    x.setLineDash([3,4]); x.strokeStyle="#9fd1b2"; x.lineWidth=1; x.beginPath(); x.moveTo(cx+S[0]*sc,cy-S[1]*sc); x.lineTo(x0,cy-S[1]*sc); x.stroke(); x.setLineDash([]);
+    const ys=sc;
+    const wave=(arr,col,lw)=>{ x.strokeStyle=col; x.lineWidth=lw; x.beginPath(); arr.forEach((v,k)=>{ const X=x0+k, Y=cy-v*ys; k?x.lineTo(X,Y):x.moveTo(X,Y); }); x.stroke(); };
+    wave(ha,"rgba(31,95,191,.7)",1.6); wave(hb,"rgba(217,101,11,.7)",1.6); wave(hs,"#2e9e5b",3);
+    text(x,"도는 화살표",cx,14,C.sub,11,"center"); text(x,"세로 그림자(sin)로 그린 신호",x0+6,14,C.sub,11);
+    const amp=Math.hypot(1+Bm*Math.cos(ph),Bm*Math.sin(ph)), pdeg=Math.atan2(Bm*Math.sin(ph),1+Bm*Math.cos(ph))*180/Math.PI;
+    $("smOut").textContent="A = 1, B = "+Bm.toFixed(2)+", 위상차 φ = "+Math.round(ph*180/Math.PI)+"°   →   합의 크기 = |1 + B·e^(jφ)| = "+amp.toFixed(2)+",  합의 위상 = "+pdeg.toFixed(0)+"°"+(amp<0.05?"   (서로 지워짐)":"");
+    requestAnimationFrame(frame);
+  }
+  document.querySelectorAll("[data-sm]").forEach(b=>b.onclick=()=>{ const v=b.dataset.sm.split(","); $("smP").value=v[0]; $("smB").value=v[1]; });
+  requestAnimationFrame(frame);
+})();
+
+/* ---------- 좁은 화면: 긴 공식은 줄을 나누고, 그래도 넘치면 글자를 조금 줄임 ---------- */
+(function(){
+  function fit(){
+    document.querySelectorAll('.eq').forEach(eq=>{
+      eq.style.fontSize='';
+      const cs=getComputedStyle(eq), avail=eq.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+      let widest=0; eq.querySelectorAll('.seg').forEach(sg=>{ widest=Math.max(widest,sg.getBoundingClientRect().width); });
+      if(!widest) widest=eq.scrollWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight);
+      if(widest>avail){ const base=parseFloat(cs.fontSize); eq.style.fontSize=Math.max(base*0.8,base*avail/widest*0.98)+'px'; }
+    });
+  }
+  let t=null; window.addEventListener('resize',()=>{ clearTimeout(t); t=setTimeout(fit,120); });
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit);
+  window.addEventListener('load',fit); fit();
+})();
+})();
+</script>
+<script>
+/* ---------- 블로그(iframe) 삽입: 높이·보이는 범위 주고받기 (antenna-types 규약) ---------- */
+(function(){
+  if (window.self === window.top) return;
+  var last = 0, on = false;
+  function send(force){
+    if (!on) return;
+    var h = Math.ceil(document.documentElement.scrollHeight);
+    if (!force && Math.abs(h - last) < 2) return;
+    last = h;
+    try { window.parent.postMessage({type: 'antenna-types:height', height: h}, '*'); } catch(e){}
+  }
+  window.addEventListener('message', function(e){
+    var d = e.data;
+    if (!d || typeof d !== 'object') return;
+    if (d.type === 'antenna-types:ping'){
+      var first = !on;
+      if (!on){ on = true; window.__embedOn = true; document.documentElement.classList.add('embedded'); }
+      send(true);
+      if (first) setTimeout(jumpHash, 200);
+    } else if (d.type === 'antenna-types:viewport'){
+      window.__embedView = {top: +d.top || 0, height: +d.height || 0};
+      document.dispatchEvent(new Event('embedview'));
+    }
+  });
+  if ('ResizeObserver' in window) new ResizeObserver(function(){ send(false); }).observe(document.body);
+  window.addEventListener('load', function(){ send(true); });
+  /* 목차 링크(#i5 등): 블로그 화면을 그 자리로 옮깁니다 */
+  function scrollToEl(el){
+    var v = window.__embedView, H = v && v.height ? v.height : 800;
+    var y = el.getBoundingClientRect().top + window.scrollY - 70 + H / 2;
+    try { window.parent.postMessage({type: 'antenna-types:scrollto', y: y, smooth: true}, '*'); } catch(e){}
+  }
+  function jumpHash(){
+    var t = location.hash && document.getElementById(location.hash.slice(1));
+    if (t) scrollToEl(t);
+    else if (document.referrer && document.referrer.indexOf(location.host) >= 0) scrollToEl(document.body);
+  }
+  document.addEventListener('click', function(e){
+    if (!window.__embedOn) return;
+    var a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a) return;
+    var t = document.getElementById(a.getAttribute('href').slice(1)); if (!t) return;
+    e.preventDefault(); scrollToEl(t);
+  });
+})();
+
+</script>
+<script>
+window.NARR = [
+  {"s": "hero", "at": "h1", "t": "그래프로 보는 오일러 공식입니다. e의 i세타 제곱은 코사인 세타 더하기 i 사인 세타. 이 식 하나가 원과 사인 곡선, 코사인 곡선을 한꺼번에 그립니다. 나선 그래프에서 출발해 무한급수의 화살표 길, 밑이 e여야 하는 이유, 무선 신호의 합성까지 그림으로 확인하겠습니다."},
+  {"s": "hero", "at": ".qs", "t": "글은 8개 단원이고, 그림 7개가 함께 나옵니다. 듣는 동안 그림도 대본에 맞춰 움직입니다. 허수 단위 j 자체에 대한 이야기는 위쪽 메뉴의 허수 j 페이지에 있습니다."},
+  {"s": "e1", "c": 1, "t": "그림의 검은 곡선은 식 하나, e의 i세타 제곱이 그린 것입니다. 세타가 커지는 동안 점은 반지름 1인 원을 돌면서 세타축을 따라 앞으로 나아가고, 그 자취가 나선이 됩니다."},
+  {"s": "e1", "c": 2, "t": "나선을 처음부터 다시 그려 보겠습니다. 주황 곡선은 나선이 뒷벽에 드리운 그림자이고, 초록 곡선은 바닥에 드리운 그림자입니다. 앞에서 보겠습니다. 세타축이 한 점으로 겹쳐 원만 남습니다. 옆에서 보면 세로축이 허수축이어서, 나선은 허수부인 사인 세타 곡선과 겹칩니다. 밑에서 보면 세로축이 실수축이어서, 실수부인 코사인 세타 곡선이 됩니다. 원을 그리며 나아가는 움직임 하나가, 보는 방향에 따라 원도 되고 삼각함수 그래프도 됩니다.", "a": [["click", "[data-hv=\"obl\"]"], ["click", "#hxDraw"], ["at", 2, [["click", "[data-hv=\"front\"]"]]], ["at", 4, [["click", "[data-hv=\"side\"]"]]], ["at", 5, [["click", "[data-hv=\"bottom\"]"]]], ["at", 6, [["click", "[data-hv=\"obl\"]"]]]]},
+  {"s": "e1", "c": 3, "t": "그림은 끌어서 직접 돌려 볼 수 있습니다. 왜 원을 돌고, 왜 사인과 코사인이 나오는지 차례로 풀어 가겠습니다."},
+  {"s": "e2", "c": 1, "t": "보통의 지수함수는 밑이 1보다 크면 지수가 커질수록 값도 커집니다. 2의 x제곱도, e의 x제곱도 x가 커지면 끝없이 커집니다. 그런데 e의 i세타 제곱은 세타를 아무리 키워도 크기가 1에서 변하지 않고 원 위를 돕니다."},
+  {"s": "e2", "c": 2, "t": "왼쪽은 실수 지수, 오른쪽은 허수 지수입니다. 주황 화살표는 지금 변하는 방향입니다. 왼쪽에서는 변하는 방향이 커지는 쪽과 같아서, 커질수록 더 빨리 커집니다. 오른쪽에서는 변하는 방향이 지금 위치와 언제나 직각입니다. 세타를 키우면 점은 원을 따라 돌 뿐 바깥으로 나가지 않습니다.", "a": [["range", "grT", 1, 600], ["at", 4, [["range", "grT", 3.14, 1800], ["range", "grT", 6.28, 1800]]]]},
+  {"s": "e2", "c": 3, "t": "이유는 미분에 있습니다. e의 x제곱을 미분하면 자기 자신이 나옵니다. 실수 지수의 미분 규칙이 허수에서도 성립한다고 보면, e의 i세타 제곱을 세타로 미분해 i 곱하기 e의 i세타 제곱을 얻습니다. 이 규칙은 5단원의 급수로 확인됩니다. i를 곱하면 방향이 90도 돌아가므로, 속도가 위치와 늘 직각입니다. 원점에서 바깥으로 밀어내는 성분이 없으니 크기는 그대로이고, 방향만 계속 돌아갑니다. 이것이 원운동입니다."},
+  {"s": "e2", "c": 5, "t": "속도의 크기도 늘 1입니다. 그래서 세타는 반지름 1인 원을 따라 걸은 길이, 곧 라디안으로 잰 각도가 됩니다. 세타가 파이이면 반 바퀴를 걸어 마이너스 1에 도착하고, 2파이이면 한 바퀴를 돌아 1로 돌아옵니다."},
+  {"s": "e3", "c": 1, "t": "원만 보아서는 점이 몇 바퀴째인지 알 수 없습니다. 그래서 세타를 위한 축을 하나 세우면, 원이 세타축 방향으로 늘어나 나선이 됩니다. 나선을 옆에서 보는 것은 시간축을 옆으로 펼쳐 놓고 세로 그림자만 기록하는 것과 같습니다."},
+  {"s": "e3", "c": 2, "t": "점이 도는 동안 세로 그림자를 오른쪽으로 펼치면 주황색 사인 곡선이 그려집니다. 세로 그림자는 허수부입니다. 가로 그림자를 펼치면 초록색 코사인 곡선이 됩니다. 가로 그림자는 실수부입니다. 둘을 함께 놓으면 모양은 같고 위치만 90도 어긋나 있습니다. 같은 회전을 다른 방향에서 본 그림자이기 때문입니다.", "a": [["press", "#pjPlay", true], ["click", "[data-pj=\"sin\"]"], ["at", 2, [["click", "[data-pj=\"cos\"]"]]], ["at", 4, [["click", "[data-pj=\"both\"]"]]]]},
+  {"s": "e4", "c": 2, "t": "원 위의 점에서 실수축으로 수선을 내리면, 반지름 1을 빗변으로 하는 직각삼각형이 생깁니다. 삼각비의 정의에 따라 밑변은 코사인 세타, 높이는 사인 세타입니다. 가로는 실수부, 세로는 허수부이므로 원 위의 점은 코사인 세타 더하기 i 사인 세타로 씁니다. 각도를 두 번째 사분면으로 옮기면 코사인이 음수가 됩니다. 세 번째 사분면에서는 둘 다 음수가 되지만, 식은 그대로 성립합니다.", "a": [["range", "trT", 50, 800], ["at", 3, [["range", "trT", 140, 1500]]], ["at", 4, [["range", "trT", 230, 1500]]]]},
+  {"s": "e4", "c": 3, "t": "이것이 오일러 공식입니다. e의 i세타 제곱은 코사인 세타 더하기 i 사인 세타."},
+  {"s": "e5", "c": 1, "t": "그런데 정말 e의 i세타 제곱이 원 위에 있을까요. i는 정수가 아니어서 e를 i번 곱하는 반복 곱셈으로는 해석할 수 없습니다. 그래서 복소수 지수는 지수함수의 급수 정의로 다룹니다. 지수함수는 끝없는 덧셈, 곧 테일러 급수로 쓸 수 있습니다."},
+  {"s": "e5", "c": 3, "t": "x 자리에 i세타를 넣습니다. 복소수끼리 더하는 것은 화살표를 끝과 끝으로 이어 붙이는 것과 같습니다. 그러니 이 끝없는 덧셈은 화살표를 이어 붙인 길로 그릴 수 있습니다."},
+  {"s": "e5", "c": 5, "t": "세타를 파이로 두고 항을 하나씩 이어 붙여 보겠습니다. 첫째 항은 오른쪽으로 길이 1인 화살표입니다. 둘째 항 i파이는 i가 한 번 곱해졌으니 90도 돌아 위로 약 3.14만큼 갑니다. 셋째 항은 i파이의 제곱을 2팩토리얼로 나눈 값입니다. i를 두 번 곱하면 마이너스 1이니, 또 90도 돌아 왼쪽으로 약 4.93만큼 갑니다. 넷째 항은 i가 세 번 곱해져 마이너스 i, 아래로 약 5.17만큼 내려갑니다.", "a": [["press", "#srSplit", false], ["click", "#srReset"], ["click", "#srPi"], ["at", 2, [["click", "#srStep"]]], ["at", 4, [["click", "#srStep"]]], ["at", 5, [["click", "#srStep"]]]]},
+  {"s": "e5", "c": 5, "t": "항이 하나 늘 때마다 i가 하나 더 곱해져 화살표는 90도씩 꺾입니다. 처음에는 원 밖으로 크게 벗어나지만, 다섯째 항부터는 화살표가 짧아집니다. 다음 항으로 갈 때 분자에는 파이가 한 번 곱해지지만, 분모에는 4, 5, 6처럼 파이보다 큰 수가 곱해지기 때문입니다. 항이 많아질수록 길은 안쪽으로 감겨 들어오고, 이 급수는 정확히 마이너스 1로 수렴합니다.", "a": [["click", "#srAll"]]},
+  {"s": "e5", "c": 5, "t": "화살표를 가로와 세로로 나눠 색을 칠해 보겠습니다. 초록인 가로 화살표만 모으면 코사인의 테일러 급수, 주황인 세로 화살표만 모으면 사인의 테일러 급수와 항별로 일치합니다. 가로 화살표는 세타의 짝수 제곱 항, 세로 화살표는 홀수 제곱 항입니다. 그래서 이 끝없는 덧셈의 답은 코사인 세타 더하기 i 사인 세타, 곧 오일러 공식이 성립합니다.", "a": [["press", "#srSplit", true]]},
+  {"s": "e5", "c": 11, "t": "세타가 파이일 때 e의 i파이 제곱은 마이너스 1이고, 여기에 1을 더하면 0입니다. 오일러 등식은 오일러 공식에서 세타 하나를 고른 결과입니다. 다른 세타에서도 화살표 길은 언제나 단위원 위의 점에 닿습니다."},
+  {"s": "e6", "c": 1, "t": "그런데 왜 하필 밑이 e일까요. 밑을 2나 10으로 바꿔도 점은 원을 돕니다. 크기는 그대로 1이고, 돈 각도만 세타에 로그 값을 곱한 만큼이 됩니다. 문제는 걸음의 빠르기입니다."},
+  {"s": "e6", "c": 2, "t": "세타를 0에서 파이까지 움직여 보겠습니다. 밑이 2이면 걸음이 느려 반 바퀴를 채우지 못하고 약 125도에서 멈춥니다. 밑이 10이면 너무 빨라 한 바퀴를 넘어 약 414도까지 갑니다. 밑이 e일 때만 걸은 길이와 돈 각도가 정확히 같고, 세타가 파이일 때 딱 반 바퀴, 마이너스 1에 닿습니다.", "a": [["click", "#bsPlay"]]},
+  {"s": "e6", "c": 4, "t": "그래서 e는 단순한 지수의 밑이 아닙니다. 미분해도 자기 자신이 되는 미적분의 수이고, 그 성질 덕분에 각도를 라디안으로 잴 때 회전과 지수가 정확히 맞물립니다. 자연상수 e와 지수함수, 삼각함수가 i를 통해 하나로 이어집니다."},
+  {"s": "e7", "c": 1, "t": "교류 전압, 안테나 전류, 수신 신호처럼 출렁이는 신호를 다룰 때, 공학에서는 신호를 도는 화살표의 그림자로 봅니다. 전기에서는 전류 기호와 구분하려고 허수 단위를 j로 씁니다. 삼각함수끼리의 계산이 지수의 곱셈과 화살표의 덧셈으로 바뀌어 간단해지기 때문입니다."},
+  {"s": "e7", "c": 3, "t": "주파수가 같은 두 신호를 더해 보겠습니다. 위상이 같으면 두 화살표가 한 줄로 이어져 합이 두 배가 됩니다. 위상이 90도 어긋나면 화살표가 직각으로 이어져, 합의 크기는 약 1.41배가 됩니다. 합쳐진 화살표도 같은 빠르기로 돌고, 그 그림자가 두 신호를 더한 결과입니다. 그림은 세로 그림자로 그렸는데, 가로 그림자로 그려도 모든 파형이 똑같이 90도 옮겨질 뿐 합의 크기와 위상차는 같습니다. 위상이 반대이면 두 화살표가 서로를 지워 신호가 사라집니다.", "a": [["click", "[data-sm=\"0,1\"]"], ["at", 2, [["click", "[data-sm=\"90,1\"]"]]], ["at", 5, [["click", "[data-sm=\"180,1\"]"]]]]},
+  {"s": "e7", "c": 6, "t": "무선에서 이 계산이 나오는 곳은 많습니다. 위상 배열 안테나는 두 소자의 전류 위상을 조절해, 어느 방향에서는 전파가 보강되고 다른 방향에서는 상쇄되게 만듭니다. 같은 신호가 길이가 다른 두 경로로 오면 위상차에 따라 세기가 오르내리는데, 이동 중 FM 신호가 일렁이는 다중 경로 페이딩입니다. 급전선의 정재파도 진행파와 반사파 두 화살표의 합이 위치마다 달라져 생기고, 그 최대와 최소의 비가 SWR입니다."},
+  {"s": "e8", "c": 1, "t": "정리하겠습니다. e의 i세타 제곱은 원을 돌며 나아가는 하나의 움직임이고, 보는 방향에 따라 원, 사인, 코사인이 됩니다. 변하는 방향이 위치와 직각이라 크기는 변하지 않고 돌며, 세타는 걸은 길이입니다. 급수의 화살표 길도 같은 점에 닿고, 밑이 e일 때만 걸은 길이와 각도가 일치합니다."},
+  {"s": "e8", "c": 2, "t": "오일러 공식은 지수함수, 삼각함수, 복소수를 한 줄로 묶습니다. 무선에서 교류 회로의 j, 임피던스, 페이저, I Q 신호가 모두 이 한 줄 위에서 계산됩니다. 허수 단위 j의 쓰임은 위쪽 메뉴의 허수 j 페이지에서 이어집니다."}
+];
+</script>
+<script>
+/* ---------- 듣기: 기기 음성(Web Speech API) — 교과서 속 공식과 같은 방식 ---------- */
+(function(){
+  const S = window.speechSynthesis;
+  const hero = document.querySelector('.hero');
+  const mk = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+  const placeHero = box => { const h1 = hero && hero.querySelector('h1'); if (h1) h1.insertAdjacentElement('afterend', box); else if (hero) hero.appendChild(box); };
+
+  if (!S || !window.SpeechSynthesisUtterance){
+    /* 앱 안 브라우저(카카오톡·안드로이드 WebView 등)에는 음성 기능이 없습니다 */
+    if (!hero) return;
+    const url = location.href.split('#')[0];
+    const android = /Android/i.test(navigator.userAgent);
+    const openHref = android ? 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;end' : url;
+    const box = mk('div', 'listen');
+    const btn = mk('button', 'narr-all', '<span aria-hidden="true">▶</span>처음부터 듣기'); btn.type = 'button';
+    const note = mk('span', 'narr-note', '기기 음성으로 읽고, 읽는 곳으로 화면이 따라갑니다.');
+    const msg = mk('div', 'narr-unsup', '<p>이 앱 화면에서는 듣기 기능을 쓸 수 없습니다. 크롬이나 사파리 같은 브라우저에서 열면 들을 수 있습니다.</p>' +
+      '<div class="unsup-actions"><a class="btnlink" target="_blank" rel="noopener">브라우저에서 열기</a><button type="button" class="narr-sec">주소 복사</button></div>');
+    msg.hidden = true;
+    msg.querySelector('a').href = openHref;
+    const cp = msg.querySelector('button');
+    cp.addEventListener('click', () => {
+      const done = () => { cp.textContent = '복사했습니다'; };
+      const legacy = () => {
+        const t = document.createElement('textarea'); t.value = url; t.setAttribute('readonly', '');
+        t.style.position = 'absolute'; t.style.left = '-9999px'; document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); done(); } catch(e){ cp.textContent = url; }
+        document.body.removeChild(t);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, legacy); else legacy();
+    });
+    btn.addEventListener('click', () => { msg.hidden = !msg.hidden; });
+    box.appendChild(btn); box.appendChild(note); box.appendChild(msg); placeHero(box);
+    return;
+  }
+  const emb = () => !!window.__embedOn;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- 대본 (window.NARR) → 화면 위치 ---------- */
+  function resolve(n){
+    const root = n.s === 'hero' ? hero : document.getElementById(n.s);
+    if (!root) return null;
+    if (typeof n.c === 'number') return root.children[n.c] || root;
+    if (n.at) return root.querySelector(n.at) || root;
+    return root;
+  }
+  const items = (window.NARR || []).map(n => ({sec: n.s, el: resolve(n), text: n.t, acts: n.a || []})).filter(it => it.el);
+  if (!items.length) return;
+  function splitSentences(t){ return t.replace(/([.?!])\s+/g, '$1\u0001').split('\u0001').map(x => x.trim()).filter(Boolean); }
+  items.forEach(it => it.parts = splitSentences(it.text));
+
+  /* ---------- 대본이 실험 상자를 조작하기 ---------- */
+  const anims = {};
+  function animRange(id, to, ms){
+    const el = document.getElementById(id); if (!el) return;
+    cancelAnimationFrame(anims[id]);
+    const from = +el.value, t0 = performance.now(), dur = reduce ? 0 : (ms || 1500);
+    const stepF = now => {
+      const u = dur ? Math.min(1, (now - t0) / dur) : 1, e = u < .5 ? 2*u*u : 1 - Math.pow(-2*u + 2, 2) / 2;
+      el.value = from + (to - from) * e; el.dispatchEvent(new Event('input', {bubbles: true}));
+      if (u < 1) anims[id] = requestAnimationFrame(stepF);
+    };
+    anims[id] = requestAnimationFrame(stepF);
+  }
+  let pending = [];
+  function runActs(it, list){
+    /* list가 없으면 문단 시작 조작, 있으면 문장 시작 조작(['at', 문장 번호, [...]]) */
+    if (!list) list = it.acts.filter(a => a[0] !== 'at');
+    let delay = 0;
+    list.forEach(a => {
+      const run = () => {
+        if (a[0] === 'range') animRange(a[1], a[2], a[3]);
+        else if (a[0] === 'select'){ const el = document.getElementById(a[1]); if (el){ el.value = a[2]; el.dispatchEvent(new Event('change', {bubbles: true})); } }
+        else if (a[0] === 'click'){ const b = document.querySelector(a[1]); if (b) b.click(); }
+        else if (a[0] === 'press'){ const b = document.querySelector(a[1]); if (b && b.getAttribute('aria-pressed') !== String(a[2])) b.click(); }
+      };
+      if (a[0] === 'wait'){ delay += a[1]; return; }
+      if (delay){ pending.push(setTimeout(run, delay)); } else run();
+      if (a[0] === 'range') delay += (reduce ? 0 : (a[3] || 1500)) + 100;
+    });
+  }
+  function secLabel(sec){
+    if (sec === 'hero') return '머리말';
+    const el = document.getElementById(sec), h = el && el.querySelector(':scope > h2');
+    if (!h) return sec;
+    const no = h.querySelector('.no'), t = h.cloneNode(true); const n = t.querySelector('.no'); if (n) n.remove();
+    return (no ? no.textContent.trim() + ' · ' : '') + t.textContent.trim();
+  }
+
+  /* ---------- 목소리 고르기: 자연스러운 음성 우선 ---------- */
+  let voice = null;
+  function pickVoice(){
+    const vs = S.getVoices().filter(v => /^ko(-|_|$)/i.test(v.lang));
+    if (!vs.length){ voice = null; return; }
+    const score = v => (/natural|neural|online/i.test(v.name) ? 4 : 0) + (/google/i.test(v.name) ? 2 : 0) + (/yuna|sunhi|heami|injoon|hyunsu|jimin/i.test(v.name) ? 1 : 0);
+    voice = vs.slice().sort((a, b) => score(b) - score(a))[0];
+  }
+  pickVoice();
+  if (typeof S.addEventListener === 'function') S.addEventListener('voiceschanged', pickVoice); else S.onvoiceschanged = pickVoice;
+  try { S.cancel(); } catch(e){}
+
+  /* ---------- 화면 ---------- */
+  const heroBox = mk('div', 'listen');
+  const allBtn = mk('button', 'narr-all', '<span aria-hidden="true">▶</span>처음부터 듣기'); allBtn.type = 'button';
+  heroBox.appendChild(allBtn); heroBox.appendChild(mk('span', 'narr-note', '기기 음성으로 읽고, 읽는 곳으로 화면이 따라갑니다.'));
+  placeHero(heroBox);
+
+  [...document.querySelectorAll('section.item')].forEach(secEl0 => {
+    const sec = secEl0.id, h2 = secEl0.querySelector(':scope > h2');
+    if (!h2 || items.findIndex(x => x.sec === sec) < 0) return;
+    const b = mk('button', 'narr-sec', '<span aria-hidden="true">▶</span>이 단원 듣기'); b.type = 'button';
+    b.addEventListener('click', () => start(items.findIndex(x => x.sec === sec), sec));
+    h2.insertAdjacentElement('afterend', b);
+  });
+
+  const bar = mk('div', 'narr-bar');
+  bar.setAttribute('role', 'region'); bar.setAttribute('aria-label', '낭독 재생');
+  bar.hidden = true;
+  bar.innerHTML =
+    '<div class="nb-info"><span class="nb-sec"></span><span class="nb-pos"></span></div>' +
+    '<div class="nb-ctrl">' +
+      '<button type="button" class="alt nb-prev" aria-label="이전 문단">⏮</button>' +
+      '<button type="button" class="nb-play" aria-label="일시정지">❚❚</button>' +
+      '<button type="button" class="alt nb-next" aria-label="다음 문단">⏭</button>' +
+      '<label class="nb-rate">속도 <select class="nb-rsel"><option value="0.8">0.8×</option><option value="0.9">0.9×</option><option value="1" selected>1.0×</option><option value="1.1">1.1×</option><option value="1.2">1.2×</option></select></label>' +
+      '<button type="button" class="alt nb-close" aria-label="낭독 닫기">✕</button>' +
+    '</div>' +
+    '<div class="nb-msg" hidden></div>';
+  document.body.appendChild(bar);
+  function placeBar(){
+    if (!emb() || bar.hidden) return;
+    const v = window.__embedView; if (!v) return;
+    const bh = bar.offsetHeight || 64, dh = document.documentElement.scrollHeight;
+    bar.style.top = Math.max(0, Math.min(dh - bh, v.top + v.height - bh)) + 'px';
+  }
+  document.addEventListener('embedview', placeBar);
+  const $ = s => bar.querySelector(s);
+  const secEl = $('.nb-sec'), posEl = $('.nb-pos'), playBtn = $('.nb-play'), rateSel = $('.nb-rsel'), msgEl = $('.nb-msg');
+
+  /* ---------- 읽기 ---------- */
+  let i = 0, k = 0, gen = 0, playing = false, onlySec = null, active = null, curUtter = null;
+  /* 예약된 그림 조작과 슬라이더 애니메이션을 모두 멈춥니다 (일시정지·닫기·문단 이동 때) */
+  function stopActs(){ pending.forEach(clearTimeout); pending = []; Object.keys(anims).forEach(id => cancelAnimationFrame(anims[id])); }
+  function setActive(el, it){
+    if (active) active.classList.remove('narr-on');
+    active = el;
+    stopActs();
+    if (!el) return;
+    el.classList.add('narr-on');
+    if (it){ const d = reduce ? 0 : 450; it._baseAt = performance.now() + d; pending.push(setTimeout(() => runActs(it), d)); }
+    const r = el.getBoundingClientRect();
+    if (emb()){
+      const v = window.__embedView, H = v && v.height ? v.height : window.innerHeight;
+      const off = Math.max(56, H * 0.1);
+      const y = r.top + window.scrollY - off + H / 2;
+      try { window.parent.postMessage({type: 'antenna-types:scrollto', y: y, smooth: !reduce}, '*'); } catch(e){}
+    } else {
+      const off = Math.max(56, window.innerHeight * 0.1);
+      window.scrollTo({top: Math.max(0, r.top + window.scrollY - off), behavior: reduce ? 'auto' : 'smooth'});
+    }
+  }
+  function updateBar(){
+    const it = items[i];
+    secEl.textContent = secLabel(it.sec);
+    const same = items.filter(x => x.sec === it.sec);
+    posEl.textContent = (same.indexOf(it) + 1) + ' / ' + same.length;
+    playBtn.textContent = playing ? '❚❚' : '▶';
+    playBtn.setAttribute('aria-label', playing ? '일시정지' : '재생');
+  }
+  function showMsg(t){ msgEl.textContent = t; msgEl.hidden = !t; }
+  function speakPart(g){
+    if (g !== gen || !playing) return;
+    const it = items[i];
+    if (k >= it.parts.length){
+      const n = i + 1;
+      if (n < items.length && (!onlySec || items[n].sec === onlySec)){ i = n; k = 0; setActive(items[i].el, items[i]); updateBar(); speakPart(g); }
+      else finish();
+      return;
+    }
+    it.acts.forEach(a => { if (a[0] === 'at' && a[1] === k && k > 0){ const w = Math.max(0, (it._baseAt || 0) - performance.now()) + 20; pending.push(setTimeout(() => runActs(it, a[2]), w)); } });
+    const u = new SpeechSynthesisUtterance(it.parts[k]);
+    curUtter = u;   /* 크롬 계열에서 읽는 도중 객체가 치워져 onend가 사라지는 일을 막습니다 */
+    u.lang = 'ko-KR';
+    if (voice) u.voice = voice;
+    u.rate = +rateSel.value;
+    u.onend = () => { if (g !== gen) return; k++; speakPart(g); };
+    u.onerror = e => { if (g !== gen) return; if (e && (e.error === 'interrupted' || e.error === 'canceled')) return; k++; speakPart(g); };
+    S.speak(u);
+  }
+  function go(){ gen++; try { S.cancel(); } catch(e){} playing = true; updateBar(); speakPart(gen); }
+  function start(idx, sec){
+    if (idx < 0) return;
+    pickVoice();
+    bar.hidden = false; document.body.classList.add('narr-open');
+    bar.classList.toggle('emb', emb());
+    if (emb()){ try { window.parent.postMessage({type: 'antenna-types:needview'}, '*'); } catch(e){} placeBar(); }
+    if (!voice && S.getVoices().length){
+      showMsg('이 브라우저에는 한국어 음성이 없어 읽을 수 없습니다. 엣지, 크롬, 사파리에서 열어 보십시오.');
+      playing = false; i = idx; updateBar(); return;
+    }
+    showMsg('');
+    onlySec = sec || null; i = idx; k = 0;
+    setActive(items[i].el, items[i]);
+    go();
+  }
+  function pause(){ playing = false; gen++; stopActs(); try { S.cancel(); } catch(e){} updateBar(); }
+  function finish(){ playing = false; gen++; updateBar(); setActive(null); }
+  function close(){ pause(); setActive(null); bar.hidden = true; document.body.classList.remove('narr-open'); showMsg(''); }
+  function jump(d){
+    const n = Math.max(0, Math.min(items.length - 1, i + d));
+    if (onlySec && items[n].sec !== onlySec) onlySec = items[n].sec;
+    i = n; k = 0; setActive(items[i].el, items[i]); go();
+  }
+  allBtn.addEventListener('click', () => start(0, null));
+  playBtn.addEventListener('click', () => { if (playing) pause(); else { if (!active) setActive(items[i].el, items[i]); go(); } });
+  $('.nb-prev').addEventListener('click', () => jump(k > 0 ? 0 : -1));
+  $('.nb-next').addEventListener('click', () => jump(1));
+  $('.nb-close').addEventListener('click', close);
+  rateSel.addEventListener('change', () => { if (playing) go(); });
+  window.addEventListener('pagehide', () => { try { S.cancel(); } catch(e){} });
+})();
+
+</script>
+</body>
+</html>
